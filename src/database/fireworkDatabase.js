@@ -108,4 +108,12 @@ export default class FireworkDatabase extends Sequelize {
 			modelName: "MessageVisibility"
 		})
 	}
+
+	async createUser(name) {
+		return User.create({ name: name });
+	}
+
+	async createGroup(name) {
+		return Group.create({ name: name });
+	}
 }
