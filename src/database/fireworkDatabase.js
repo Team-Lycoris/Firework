@@ -53,7 +53,11 @@ export default class FireworkDatabase extends Sequelize {
 			},
 			author: {
 				type: DataTypes.INTEGER,
-				allowNull: false
+				allowNull: false,
+				references: {
+					model: User,
+					key: "id"
+				}
 			},
 			content: {
 				type: DataTypes.STRING(2000), // max length 2000
