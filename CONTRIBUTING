@@ -1,0 +1,15 @@
+# Contribution Guidelines
+
+1. Fork the organization's repository.
+2. Clone your fork onto your machine.
+3. Create a new branch in your fork. (Name the branch according to the changes you'll make.)
+4. Commit changes to the new branch.
+5. Push your changes to Github. (Push to your fork, probably the "origin" remote repository.)
+6. Submit a pull request to request merging changes into the organization repository.
+7. Pull request is reviewed and hopefully eventually merged.
+8. Pull changes from organization repository. (Probably from the "upstream" remote repository.)
+9. Your changes should now be reflected in the main branch.
+
+### Commit Naming
+1. Every commit should have a proper commit message.
+2. Try to start commit messages with a verb. Example: "Implement friend requests" or "Fix friend request bug"
