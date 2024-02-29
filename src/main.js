@@ -1,5 +1,6 @@
 import FireworkDatabase from "./database/fireworkDatabase.js"
-
+import { Server } from 'socket.io';
+import eventHandler from "./api/eventHandler.js";
 
 // possibly destructive operation
 // await db.sync({ alter: true })
@@ -16,3 +17,19 @@ async function test() {
 
 	await richard.sendMessage("hello gamers and non-gamers", group);
 }
+
+const io = new Server(8080, {
+	cors: {
+		origin: "http://localhost:3000"
+	}
+});
+
+io.on('connection', (socket) => {
+	console.log("Client connected");
+
+	eventHandler(io, socket);
+
+	socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
