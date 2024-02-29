@@ -5,6 +5,8 @@ export default function eventHandler(io, socket) {
   
   function handleMessage(data, callback) {
     console.log("Message:", data);
+    let roomId = 'ch-' + data.channel.toString();
+    socket.broadcast.to(roomId).emit('server:message', data);
     callback({
       status: 'OK'
     });
@@ -26,6 +28,11 @@ export default function eventHandler(io, socket) {
 
   function handleJoinChannel(data, callback) {
     console.log("Join channel:", data);
+    let oldRoomId = 'ch-' + data.oldChannel.toString();
+    socket.leave(oldRoomId);
+    let newRoomId = 'ch-' + data.newChannel.toString();
+    socket.join(newRoomId);
+    console.log(socket.rooms);
     callback({
       status: 'OK'
     });

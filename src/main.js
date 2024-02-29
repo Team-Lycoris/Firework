@@ -27,5 +27,7 @@ const io = new Server(8080, {
 io.on('connection', (socket) => {
 	console.log("Client connected");
 
+	socket.join('ch-1');
+
 	eventHandler(io, socket);
 });
