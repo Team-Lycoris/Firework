@@ -6,5 +6,10 @@ export default function eventHandler(io, socket) {
     })
   }
 
-  socket.on("message", handleMessage);
+  function handleDisconnect(reason) {
+    console.log('Client disconnected:', reason);
+  }
+
+  socket.on('message', handleMessage);
+  socket.on('disconnect', handleDisconnect);
 }
