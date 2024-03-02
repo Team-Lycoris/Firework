@@ -28,6 +28,7 @@ io.on('connection', (socket) => {
 	console.log("Client connected");
 
 	socket.join('ch-1');
+	socket.data.active_channel = 1;
 
 	eventHandler(io, socket);
 });
