@@ -24,6 +24,10 @@ export default class FireworkDatabase extends Sequelize {
 			name: {
 				type: DataTypes.STRING,
 				allowNull: false
+			},
+			passwordHash: {
+				type: DataTypes.STRING,
+				allowNull: false
 			}
 		}, {
 			sequelize: this,
@@ -113,8 +117,35 @@ export default class FireworkDatabase extends Sequelize {
 		})
 	}
 
-	async createUser(name) {
-		return User.create({ name: name });
+	async createUser(name, passwordHash) {
+		return User.create({ name: name, passwordHash: passwordHash });
+	}
+
+	async findOrCreateUser(name, passwordHash) {
+		// Create user if it doesn't already exist
+		const [user, created] = await User.findOrCreate({
+			where: { name: name },
+			defaults: {
+				passwordHash: passwordHash
+			}
+		});
+		
+		return created;
+	}
+
+	async getUserByName(name) {
+		const user = await User.findOne({ where: { name: name }});
+
+		if (user === null) {
+			return Promise.reject("User does not exist");
+		}
+
+		return {
+			type: 'user',
+			id: user.dataValues.id,
+			name: user.dataValues.name,
+			passwordHash: user.dataValues.passwordHash
+		};
 	}
 
 	async createGroup(name) {
