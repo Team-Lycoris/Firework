@@ -20,8 +20,40 @@ export default function loginHandler(io, socket, db) {
             return;
         }
 
-        // Compare the password with a hashed password
-        //bcrypt.compare()
+        db.getUserByName(data.username)
+            .then((user) => {
+                // Compare the password with the hashed password in the database
+                return bcrypt.compare(data.password, user.passwordHash);
+            })
+            .then((matched) => {
+                if (matched) {
+                    // Given password matches with stored hashed password
+                    console.log("Logged in");
+                    callback({
+                        status: 'OK'
+                    });
+                } else {
+                    console.error("Incorrect password");
+                    callback({
+                        status: 'ERROR',
+                        error: 'Incorrect password'
+                    })
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                if (err === "User does not exist") {
+                    callback({
+                        status: 'ERROR',
+                        error: "User does not exist"
+                    })
+                } else {
+                    callback({
+                        status: 'ERROR',
+                        status: 'Unknown error'
+                    })
+                }
+            });
     }
 
     function handleRegister(data, callback) {
@@ -46,27 +78,25 @@ export default function loginHandler(io, socket, db) {
         // Create hashed version of password
         bcrypt.hash(data.password, saltRounds)
             .then((hash) => {
-                console.log(data.password, hash);
-
                 // Try to create a new user
                 return db.findOrCreateUser(data.username, hash);
             })
-            .then(([user, created]) => {
+            .then((created) => {
                 // If the user already exists, then return an error
-                console.log(user, created);
                 if (!created) {
+                    console.error("User already exists")
                     callback({
                         status: 'ERROR',
                         error: 'User already exists'
                     })
-                }
-                else {
-                    console.log('Created user:', user);
+                } else {
+                    console.log('Created user:', data.username);
                     callback({
                         status: 'OK'
                     });
                 }
-            }).catch((err) => {
+            })
+            .catch((err) => {
                 console.error(err);
                 callback({
                     status: 'ERROR',

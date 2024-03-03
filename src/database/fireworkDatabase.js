@@ -123,12 +123,29 @@ export default class FireworkDatabase extends Sequelize {
 
 	async findOrCreateUser(name, passwordHash) {
 		// Create user if it doesn't already exist
-		return User.findOrCreate({
+		const [user, created] = await User.findOrCreate({
 			where: { name: name },
 			defaults: {
 				passwordHash: passwordHash
 			}
 		});
+		
+		return created;
+	}
+
+	async getUserByName(name) {
+		const user = await User.findOne({ where: { name: name }});
+
+		if (user === null) {
+			return Promise.reject("User does not exist");
+		}
+
+		return {
+			type: 'user',
+			id: user.dataValues.id,
+			name: user.dataValues.name,
+			passwordHash: user.dataValues.passwordHash
+		};
 	}
 
 	async createGroup(name) {
