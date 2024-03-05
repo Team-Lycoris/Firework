@@ -18,7 +18,7 @@ await db.sync({ force: true });
 await test();
 
 async function test() {
-	const richard = await User.createUser("Richard", "yeet");
+	const richard = await User.createUser("Richard", "Richard", "yeet");
 	const group = await Group.createGroup("gaming");
 	await group.addUser(richard);
 
@@ -26,7 +26,7 @@ async function test() {
 	await richard.sendMessage("test", group);
 	await richard.sendMessage("yup", group);
 
-	const bobby = await User.createUser("bobby", "yeet");
+	const bobby = await User.createUser("bobby", "bobby", "yeet");
 	await group.addUser(bobby);
 	await bobby.sendMessage("testtsetset", group);
 
