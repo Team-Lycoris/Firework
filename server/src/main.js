@@ -1,4 +1,6 @@
 import FireworkDatabase from "./database/fireworkDatabase.js"
+import express from 'express';
+import cors from 'cors';
 import { Server } from 'socket.io';
 import eventHandler from "./api/eventHandler.js";
 import loginHandler from './api/loginHandler.js';
@@ -19,11 +21,18 @@ async function test() {
 	await richard.sendMessage("hello gamers and non-gamers", group);
 }
 
-const io = new Server(8080, {
-	cors: {
-		origin: "http://localhost:3000"
-	}
+const PORT = 8080;
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+const server = app.listen(PORT, () => {
+	console.log('Server started on port', PORT);
 });
+
+const io = new Server(server);
 
 io.on('connection', (socket) => {
 	console.log("Client connected");
