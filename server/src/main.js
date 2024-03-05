@@ -4,6 +4,7 @@ import cors from 'cors';
 import { Server } from 'socket.io';
 import eventHandler from "./api/eventHandler.js";
 import loginHandler from './api/loginHandler.js';
+import router from "./routes/routes.js";
 
 // possibly destructive operation
 // await db.sync({ alter: true })
@@ -27,6 +28,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use('/api/auth', router);
 
 const server = app.listen(PORT, () => {
 	console.log('Server started on port', PORT);
