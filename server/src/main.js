@@ -23,6 +23,15 @@ async function test() {
 	await group.addUser(richard);
 
 	await richard.sendMessage("hello gamers and non-gamers", group);
+	await richard.sendMessage("test", group);
+	await richard.sendMessage("yup", group);
+
+	const bobby = await User.createUser("bobby", "yeet");
+	await group.addUser(bobby);
+	await bobby.sendMessage("testtsetset", group);
+
+	console.log(await group.getUsers());
+	console.log(await group.getMessages());
 }
 
 const PORT = 8080;
