@@ -3,6 +3,7 @@ import { Sequelize, DataTypes } from 'sequelize';
 import User from "./user.js"
 import Group from "./group.js"
 import Message from "./message.js"
+import Event from "./event.js"
 import GroupMembership from "./groupMembership.js"
 import MessageVisibility from "./messageVisibility.js"
 
@@ -49,6 +50,36 @@ export default class FireworkDatabase extends Sequelize {
 			modelName: "Group"
 		});
 
+		Event.init({
+			author: {
+				type: DataTypes.INTEGER,
+				allowNull: false,
+				references: {
+					model: User,
+					key: "id"
+				}
+			},
+			name: {
+				type: DataTypes.STRING,
+				allowNull: false
+			},
+			startTime: {
+				type: DataTypes.BIGINT,
+				allowNull: false
+			},
+			endTime: {
+				type: DataTypes.BIGINT,
+				allowNull: false
+			},
+			location: {
+				type: DataTypes.STRING,
+				allowNull: false
+			}
+		}, {
+			sequelize: this,
+			modelName: "Event"
+		});
+
 		Message.init({
 			id: {
 				type: DataTypes.INTEGER,
@@ -66,6 +97,14 @@ export default class FireworkDatabase extends Sequelize {
 			content: {
 				type: DataTypes.STRING(2000), // max length 2000
 				allowNull: false
+			},
+			event: {
+				type: DataTypes.INTEGER,
+				allowNull: true,
+				references: {
+					model: Event,
+					key: "id"
+				}
 			}
 		}, {
 			sequelize: this,

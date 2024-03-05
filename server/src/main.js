@@ -30,6 +30,9 @@ async function test() {
 	await group.addUser(bobby);
 	await bobby.sendMessage("testtsetset", group);
 
+	const event = await bobby.createEvent("gamer meetup", "1234 Gaming St.", -1, 123456);
+	bobby.sendMessage("guys gamer meetup", group, event.id);
+
 	console.log(await group.getUsers());
 	console.log(await group.getMessages());
 }
