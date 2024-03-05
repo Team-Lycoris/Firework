@@ -13,7 +13,8 @@ export default class User extends Model {
 			},
 			username: {
 				type: DataTypes.STRING,
-				allowNull: false
+				allowNull: false,
+				unique: true
 			},
 			displayName: {
 				type: DataTypes.STRING,
