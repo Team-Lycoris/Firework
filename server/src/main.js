@@ -6,20 +6,33 @@ import eventHandler from "./api/eventHandler.js";
 import loginHandler from './api/loginHandler.js';
 import router from "./routes/routes.js";
 
+import User from "./database/user.js";
+import Group from "./database/group.js";
+import Message from "./database/message.js";
+
 // possibly destructive operation
 // await db.sync({ alter: true })
 
 const db = new FireworkDatabase("sqlite", "db.sqlite");
 await db.sync({ force: true });
 
-//await test();
+await test();
 
 async function test() {
-	const richard = await db.createUser("Richard");
-	const group = await db.createGroup("gaming");
+	const richard = await User.createUser("Richard", "yeet");
+	const group = await Group.createGroup("gaming");
 	await group.addUser(richard);
 
 	await richard.sendMessage("hello gamers and non-gamers", group);
+	await richard.sendMessage("test", group);
+	await richard.sendMessage("yup", group);
+
+	const bobby = await User.createUser("bobby", "yeet");
+	await group.addUser(bobby);
+	await bobby.sendMessage("testtsetset", group);
+
+	console.log(await group.getUsers());
+	console.log(await group.getMessages());
 }
 
 const PORT = 8080;
