@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import FireworkAuth from '../auth/fireworkAuth.js';
 import UserHash from '../auth/userHash.js';
 
 const saltRounds = 10;
@@ -6,19 +7,30 @@ const saltRounds = 10;
 export async function register(req, res, next) {
     try {
         const {username, password} = req.body;
+
+        // Check the validity of the given username and password format
         if (!isValidUsername(username) || !isValidPassword(password)) {
-            return res.json({status: false, msg: "Invalid username or password"});
+            return res.json({status: false, msg: "Invalid username or password format"});
         }
 
+        // Check that a user with the given username doesn't already exist
         const existingUser = await UserHash.findOne({ where: { user: username }});
         if (existingUser !== null) {
             return res.json({status: false, msg: "User already exists"});
         }
 
+        // Store the hashed version of the user's password
         const hash = await bcrypt.hash(password, saltRounds);
         const user = await UserHash.create({user: username, hash: hash});
 
-        return res.json({ status: true });
+        // Create a JWT token for the user
+        const token = await FireworkAuth.prototype.issueJWT(username, password);
+        if (token == "Incorrect password" || token == "Missing user") {
+            return res.json({status: false, msg: "Unknown error"});
+        }
+
+        // Return the token to the user in the response
+        return res.json({ status: true, token: token });
     } catch(ex) {
         next(ex);
     }
@@ -27,21 +39,32 @@ export async function register(req, res, next) {
 export async function login(req, res, next) {
     try {
         const {username, password} = req.body;
+        
+        // Check the validity of the given username and password format
         if (!isValidUsername(username) || !isValidPassword(password)) {
-            return res.json({status: false, msg: "Invalid username or password"});
+            return res.json({status: false, msg: "Invalid username or password format"});
         }
 
+        // Check that a user with the given username exists in the database
         const user = await UserHash.findOne({ where: {user: username }});
         if (!user) {
             return res.json({status: false, msg: "Incorrect username or password"});
         }
 
+        // Compare the given password against the hashed version stored in the database
         const matched = await bcrypt.compare(password, user.hash);
         if (!matched) {
             return res.json({status: false, msg: "Incorrect username or password"});
         }
 
-        return res.json({status: true });
+        // Create a JWT token for the user
+        const token = await FireworkAuth.prototype.issueJWT(username, password);
+        if (token == "Incorrect password" || token == "Missing user") {
+            return res.json({status: false, msg: "Incorrect username or password"});
+        }
+
+        // Return the token to the user in the response
+        return res.json({status: true, token: token });
     } catch(ex) {
         next(ex);
     }

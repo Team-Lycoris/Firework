@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import '../pages css/login.css';
 import axios from 'axios';
 
@@ -6,10 +7,12 @@ const registerRoute = 'http://localhost:8080/api/auth/register';
 const loginRoute = 'http://localhost:8080/api/auth/login';
 
 const Authenticate = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  // Check the validity of the username and password
   function handleValidate() {
     setError('');
     if (!checkUsername(username)) {
@@ -41,17 +44,31 @@ const Authenticate = () => {
 
   async function handleRegister(event) {
     event.preventDefault();
+
+    // Check the validity of the username and password
     if (!handleValidate()) {
       console.log(error);
       return;
     }
+
+    // Attempt to register in with the API
     const res = await axios.post(registerRoute, {
       username: username,
       password: password
     });
+
     if (res.data.status) {
       console.log('Successfully registered');
+      // Store the JWT in localStorage to be used later.
+      // Vulnerable to XSS attack
+      localStorage.setItem('user-token', res.data.token);
+
+      // Switch the user to the messages page
+      // Replace this with a different page that lets the user
+      // set their display name and profile picture later
+      navigate('/messages');
     } else {
+      // The API returned an error
       setError(res.data.msg);
       console.log(res.data.msg);
     }
@@ -59,18 +76,29 @@ const Authenticate = () => {
 
   async function handleLogin(event) {
     event.preventDefault();
+
+    // Check the validity of the username and password
     if (!handleValidate()) {
       console.log(error);
       return;
     }
+
+    // Attempt to log in with the API
     const res = await axios.post(loginRoute, {
       username: username,
       password: password
     });
-    console.log(res);
+
     if (res.data.status) {
       console.log('Successfully logged in');
+      // Store the JWT in localStorage to be used later.
+      // Vulnerable to XSS attack
+      localStorage.setItem('user-token', res.data.token);
+
+      // Switch the user to the messages page
+      navigate('/messages');
     } else {
+      // The API returned an error
       setError(res.data.msg);
       console.log(res.data.msg);
     }
