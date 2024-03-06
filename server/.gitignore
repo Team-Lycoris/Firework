@@ -1,5 +1,6 @@
 # Custom to Firework.Server
 *.sqlite
+config.json
 
 # Logs
 logs
