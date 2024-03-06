@@ -15,9 +15,9 @@ function App() {
   return (
     <BrowserRouter>
         <Routes>
-          <Route path="/pages" element={<Home/>} />
-          <Route path="/pages/login" element={<Authenticate/>} />
-          <Route path="/pages/messages" element={<MessagesPage/>} />
+          <Route path="/" element={<Home/>} />
+          <Route path="/login" element={<Authenticate/>} />
+          <Route path="/messages" element={<MessagesPage/>} />
         </Routes>
     </BrowserRouter>
   );
