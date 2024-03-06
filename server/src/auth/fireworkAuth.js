@@ -4,6 +4,7 @@ import UserHash from "./userHash.js";
 import jwt from "jsonwebtoken";
 import Config from "../config.json" with { type: "json" };
 import bcrypt from "bcrypt";
+import InvalidJwt from "./invalidJwt.js";
 
 const SALT_ROUNDS = 10;
 
@@ -15,6 +16,7 @@ export default class FireworkAuth extends Sequelize {
 		});
 
 		UserHash.initialize(this);
+		InvalidJwt.initialize(this);
 	}
 
 	async registerUser(user, password) {
@@ -25,15 +27,17 @@ export default class FireworkAuth extends Sequelize {
 	// returns (JWT, error)
 	// returns a JWT if the provided credentials are valid, otherwise null
 	// if an error occured, it's returned as a string, otherwise null
+	//
+	// probably should change to throwing errors like the other functions
 	async issueJWT(user, password) {
 		const userHash = await UserHash.findOne({
 			where: {
 				user: user
 			}
-		})
+		});
 
 		if (userHash === null)
-			return (null, "Missing user")
+			return (null, "Missing user");
 
 		const match = await bcrypt.compare(password, userHash.hash);
 		if (!match)
@@ -46,7 +50,20 @@ export default class FireworkAuth extends Sequelize {
 		}, Config.auth.jwtKey);
 	}
 
-	verifyJWT(token) {
+	async verifyJWT(token) {
+		const invalid = await InvalidJwt.findOne({
+			where: {
+				jwt: token
+			}
+		});
+
+		if (invalid !== null)
+			throw "JWT has been invalidated";
+
 		return jwt.verify(token, Config.auth.jwtKey);
+	}
+
+	async invalidateJWT(token) {
+		await InvalidJwt.create({ jwt: token });
 	}
 }

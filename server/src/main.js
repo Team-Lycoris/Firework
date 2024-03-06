@@ -39,7 +39,19 @@ async function test() {
 	bobby.sendMessage("guys gamer meetup", group, event.id);
 
 	const richardJWT = await auth.issueJWT(richard.id, "password");
-	console.log(auth.verifyJWT(richardJWT));
+	console.log(await auth.verifyJWT(richardJWT));
+
+	const bobbyJwt = await auth.issueJWT(bobby.id, "correcthorsebatterystaple");
+	auth.invalidateJWT(bobbyJwt);
+	try {
+		console.log(await auth.verifyJWT(bobbyJwt));
+	}
+	catch (e) {
+		console.log(e);
+	}
+
+	const newBobbyJwt = await auth.issueJWT(bobby.id, "correcthorsebatterystaple");
+	console.log(await auth.verifyJWT(newBobbyJwt));
 }
 
 const PORT = 8080;
