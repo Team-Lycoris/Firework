@@ -1,0 +1,23 @@
+
+.banner{
+    background-color: burlywood;
+    color:black;
+    margin-top: 75px;
+    text-align: center;
+    padding: 10px 0;
+  }
+  
+  #small-image{
+    height: 200px;
+    width: 400px;;
+  }
+  
+  #text{
+    color:chocolate;
+    font-size: 100px;
+  }
+  
+  .bold{
+    font-weight: 900;
+  }
+  
