@@ -13,7 +13,7 @@ const Authenticate = () => {
   function handleValidate() {
     setError('');
     if (!checkUsername(username)) {
-      setError('Username must start with a letter and only consist of alphanumeric characters and ., _, -.');
+      setError('Username must start with a letter and can only consist of alphanumeric characters, ., _, and -.');
       return false;
     }
     if (!checkPassword(password)) {
@@ -60,7 +60,7 @@ const Authenticate = () => {
   async function handleLogin(event) {
     event.preventDefault();
     if (!handleValidate()) {
-      console.log(res.data.msg);
+      console.log(error);
       return;
     }
     const res = await axios.post(loginRoute, {
@@ -99,10 +99,14 @@ const Authenticate = () => {
             type="password" 
             id="password" 
             name="password" 
-            required />
+            required
+          />
         </div>
         <button onClick={handleLogin}>Log In</button>
         <buttonText onClick={handleRegister}>Sign Up</buttonText>
+        {error &&
+          <div className="error">{error}</div>
+        }
       </form>
     </div>
   );
