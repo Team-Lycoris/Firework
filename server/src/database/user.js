@@ -19,10 +19,6 @@ export default class User extends Model {
 			displayName: {
 				type: DataTypes.STRING,
 				allowNull: false
-			},
-			passwordHash: {
-				type: DataTypes.STRING,
-				allowNull: false
 			}
 		}, {
 			sequelize: sequelize,
@@ -30,8 +26,8 @@ export default class User extends Model {
 		});
 	}
 
-	static async createUser(username, displayName, passwordHash) {
-		return User.create({ username: username, displayName: displayName, passwordHash: passwordHash });
+	static async createUser(username, displayName) {
+		return User.create({ username: username, displayName: displayName });
 	}
 
 	async sendMessage(content, group, eventId = null) {
