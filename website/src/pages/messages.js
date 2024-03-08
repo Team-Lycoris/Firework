@@ -6,13 +6,8 @@ import {Link} from 'react-router-dom';
 const MessagesPage = () => {
   // State to keep track of the selected conversation
   const [selectedConversation, setSelectedConversation] = useState(null);
-
-  // Function to handle selecting a conversation
-  const handleConversationSelect = (conversationId) => {
-    setSelectedConversation(conversationId);
-  };
-
-  const conversations = {
+  const [messageInput, setMessageInput] = useState('');
+  const [conversations, setConversations] = useState({
     Conversation1: [
       'Message 1 for conversation 1',
       'Message 2 for conversation 1',
@@ -25,6 +20,22 @@ const MessagesPage = () => {
       'Message 1 for conversation 3',
       'Message 2 for conversation 3',
     ]
+  })
+
+  // Function to handle selecting a conversation
+  const handleConversationSelect = (conversationId) => {
+    setSelectedConversation(conversationId);
+  };
+
+  const sendMessage = () => {
+    if (messageInput !== '' && selectedConversation) {
+      const updatedConversations = {
+        ...conversations,
+        [selectedConversation]: [...conversations[selectedConversation], messageInput]
+      };
+      setConversations(updatedConversations);
+      setMessageInput('');
+    }
   }
 
   const getConversation = () => {
@@ -40,50 +51,32 @@ const MessagesPage = () => {
     <div className="messaging-container">
 
       <div className="conversations-list">
-        <div className="conversation">
+      {Object.keys(conversations).map((conversationId) => (
+        <div className="conversation" key={conversationId}>
             <button 
               className={`button conversation-select ${
-                selectedConversation === 'Conversation1' ?
+                selectedConversation === conversationId ?
                 'active-person' : '' }`}
-                onClick={() => handleConversationSelect('Conversation1')} 
-                id="Conversation1"
-              >Conversation 1
+                onClick={() => handleConversationSelect(conversationId)} 
+              >{conversationId}
             </button>
         </div>
-
-        <div className="conversation">
-            <button 
-            className={`button conversation-select ${
-              selectedConversation === 'Conversation2' ? 'active-person' : ''
-             }`}
-             onClick={() => handleConversationSelect('Conversation2')} 
-             id="Conversation2"
-             >Conversation 2
-             </button>
-        </div>
-
-        <div className="conversation">
-            <button 
-            className={`button conversation-select ${
-              selectedConversation === 'Conversation3' ? 'active-person' : ''
-             }`}
-             onClick={() => handleConversationSelect('Conversation3')} 
-             id="Conversation3"
-             >Conversation 3
-             </button>
-        </div>
+      ))}
       </div>
 
       <div className="chat-display">
         {getConversation().map((message, index) => (
-          <div className="message" key={index}>
-            {message}
-            </div>
-        ))}
+          <div className="message" key={index}>{message}
+            </div>))}
 
         <div className="message-input">
-          <input type="text" placeholder="Type a message..." />
-          <button>Send</button>
+          <input 
+          type="text" 
+          placeholder="Type a message..." 
+          value={messageInput}
+          onChange={(e) => setMessageInput(e.target.value)}
+          />
+          <button onClick={sendMessage}>Send</button>
 
         </div>
       </div>
