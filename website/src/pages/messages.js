@@ -9,16 +9,16 @@ const MessagesPage = () => {
   const [messageInput, setMessageInput] = useState('');
   const [conversations, setConversations] = useState({
     Conversation1: [
-      'Message 1 for conversation 1',
-      'Message 2 for conversation 1',
+      {content: 'Message 1 for conversation 1', type: 'text'},
+      {content: 'Message 2 for conversation 1', type: 'text'},
     ],
     Conversation2: [
-      'Message 1 for conversation 2',
-      'Message 2 for conversation 2',
+      {content: 'Message 1 for conversation 2', type: 'text'},
+      {content: 'Message 2 for conversation 2', type: 'text'},
     ],
     Conversation3: [
-      'Message 1 for conversation 3',
-      'Message 2 for conversation 3',
+      {content: 'Message 1 for conversation 3', type: 'text'},
+      {content: 'Message 2 for conversation 3', type: 'text'},
     ]
   })
 
@@ -31,10 +31,21 @@ const MessagesPage = () => {
     if (messageInput !== '' && selectedConversation) {
       const updatedConversations = {
         ...conversations,
-        [selectedConversation]: [...conversations[selectedConversation], messageInput]
+        [selectedConversation]: [...conversations[selectedConversation], {content: messageInput, type: 'text'}]
       };
       setConversations(updatedConversations);
       setMessageInput('');
+    }
+  }
+
+  const sendLocation = () => {
+    const embeddedMessage = {content: "My location!", type: "location"};
+    if (selectedConversation){
+      const updateConversation = {
+        ...conversations,
+        [selectedConversation]: [...conversations[selectedConversation], embeddedMessage]
+      };
+      setConversations(updateConversation);
     }
   }
 
@@ -66,7 +77,11 @@ const MessagesPage = () => {
 
       <div className="chat-display">
         {getConversation().map((message, index) => (
-          <div className="message" key={index}>{message}
+          <div className="message" key={index}>{
+            message.type === 'text' ? 
+           <p>{message.content}</p> :
+            <Link to="/map">My Location</Link>
+          }
             </div>))}
 
         <div className="message-input">
@@ -77,13 +92,16 @@ const MessagesPage = () => {
           onChange={(e) => setMessageInput(e.target.value)}
           />
           <button onClick={sendMessage}>Send</button>
-
         </div>
       </div>
 
       <Link to="/">
         <button className="back-button">Go Back</button>
       </Link>
+
+      <div className="location-send">
+        <button onClick={sendLocation}>Send my location</button> 
+      </div>
       
     </div>
   );

@@ -55,6 +55,13 @@
     cursor: pointer;
   }
   
+  .location-send button {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    padding: 2px;
+  }
+
   .message-input button:hover {
     background-color: #0056b3;
   }

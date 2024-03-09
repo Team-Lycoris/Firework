@@ -9,6 +9,9 @@ const Home = () => {
             <h1>Lycoris landing banner</h1>
                 <img id='small-image' src='https://cdn.britannica.com/22/215522-050-8315BB78/green-grass-close-up.jpg' alt=''/>
                 <p>Welcome to Lycoris!</p>
+                <Link to="/login">
+                    <button>Go to login</button>
+                </Link>
                 <Link to="/messages">
                     <button>Go to messages</button>
                 </Link>
