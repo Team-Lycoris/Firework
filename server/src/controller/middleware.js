@@ -8,7 +8,7 @@ export async function authUser(req, res, next) {
 
         console.log(decoded);
         
-        req.user = decoded.user;
+        req.userId = decoded.userId;
 
         next();
     } catch(ex) {

@@ -40,10 +40,10 @@ async function test() {
 	const event = await bobby.createEvent("gamer meetup", "1234 Gaming St.", -1, 123456);
 	bobby.sendMessage("guys gamer meetup", group, event.id);
 
-	const richardJWT = await auth.issueJWT(richard.id, "password");
+	const richardJWT = await auth.issueJWT(richard.id);
 	console.log(await auth.verifyJWT(richardJWT));
 
-	const bobbyJwt = await auth.issueJWT(bobby.id, "correcthorsebatterystaple");
+	const bobbyJwt = await auth.issueJWT(bobby.id);
 	auth.invalidateJWT(bobbyJwt);
 	try {
 		console.log(await auth.verifyJWT(bobbyJwt));
@@ -52,7 +52,7 @@ async function test() {
 		console.log(e);
 	}
 
-	const newBobbyJwt = await auth.issueJWT(bobby.id, "correcthorsebatterystaple");
+	const newBobbyJwt = await auth.issueJWT(bobby.id);
 	console.log(await auth.verifyJWT(newBobbyJwt));
 }
 

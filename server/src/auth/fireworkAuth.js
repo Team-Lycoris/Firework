@@ -29,22 +29,9 @@ export default class FireworkAuth extends Sequelize {
 	// if an error occured, it's returned as a string, otherwise null
 	//
 	// probably should change to throwing errors like the other functions
-	async issueJWT(user, password) {
-		const userHash = await UserHash.findOne({
-			where: {
-				user: user
-			}
-		});
-
-		if (userHash === null)
-			return (null, "Missing user");
-
-		const match = await bcrypt.compare(password, userHash.hash);
-		if (!match)
-			return (null, "Incorrect password");
-
+	async issueJWT(userId) {
 		return jwt.sign({
-			user: user,
+			userId: userId,
 			iat: Date.now(),
 			exp: Date.now() + 60 * 60 * 24 * 30 // expires in one month
 		}, Config.auth.jwtKey);
