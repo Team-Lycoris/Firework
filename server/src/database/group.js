@@ -27,14 +27,14 @@ export default class Group extends Model {
 	}
 
 	async addUser(user) {
-		await GroupMembership.create({ user: user.id, group: this.id });
+		await GroupMembership.create({ UserId: user.id, GroupId: this.id });
 	}
 
 	async getMessages() {
 		const messageVisibilites = await MessageVisibility.findAll({
 			attributes: ["message"],
 			where: {
-				group: this.id
+				GroupId: this.id
 			}
 		});
 
@@ -53,7 +53,7 @@ export default class Group extends Model {
 		const groupMemberships = await GroupMembership.findAll({
 			attributes: ["user"],
 			where: {
-				group: this.id
+				GroupId: this.id
 			}
 		});
 

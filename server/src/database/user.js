@@ -32,7 +32,7 @@ export default class User extends Model {
 
 	async sendMessage(content, group, eventId = null) {
 		const message = await Message.create({ author: this.id, content: content, event: eventId });
-		await MessageVisibility.create({ message: message.id, group: group.id });
+		await MessageVisibility.create({ MessageId: message.id, GroupId: group.id });
 		return message;
 	}
 

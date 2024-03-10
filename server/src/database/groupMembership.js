@@ -5,7 +5,7 @@ import Group from "./group.js"
 export default class GroupMembership extends Model {
 	static initialize(sequelize) {
 		GroupMembership.init({
-			user: {
+			UserId: {
 				type: DataTypes.INTEGER,
 				allowNull: false,
 				references: {
@@ -13,7 +13,7 @@ export default class GroupMembership extends Model {
 					key: "id"
 				}
 			},
-			group: {
+			GroupId: {
 				type: DataTypes.INTEGER,
 				allowNull: false,
 				references: {

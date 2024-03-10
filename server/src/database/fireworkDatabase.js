@@ -22,5 +22,11 @@ export default class FireworkDatabase extends Sequelize {
 		Message.initialize(this);
 		GroupMembership.initialize(this);
 		MessageVisibility.initialize(this);
+
+		User.belongsToMany(Group, { through: GroupMembership });
+		Group.belongsToMany(User, { through: GroupMembership });
+
+		Message.belongsToMany(Group, { through: MessageVisibility });
+		Group.belongsToMany(Message, { through: MessageVisibility });
 	}
 }

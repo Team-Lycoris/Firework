@@ -5,7 +5,7 @@ import Message from "./message.js"
 export default class MessageVisibility extends Model {
 	static initialize(sequelize) {
 		MessageVisibility.init({
-			group: {
+			GroupId: {
 				type: DataTypes.INTEGER,
 				allowNull: false,
 				references: {
@@ -13,7 +13,7 @@ export default class MessageVisibility extends Model {
 					key: "id"
 				}
 			},
-			message: {
+			MessageId: {
 				type: DataTypes.INTEGER,
 				allowNull: false,
 				references: {
