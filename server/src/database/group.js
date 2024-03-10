@@ -25,7 +25,7 @@ export default class Group extends Model {
 	static async createGroup(name) {
 		return Group.create({ name: name });
 	}
-
+	/*
 	async addUser(user) {
 		await GroupMembership.create({ UserId: user.id, GroupId: this.id });
 	}
@@ -67,4 +67,5 @@ export default class Group extends Model {
 			}
 		});
 	}
+	*/
 }

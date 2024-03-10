@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {Link} from 'react-router-dom';
 import '../pages css/login.css';
+import { registerRoute, loginRoute } from "../utils/apiRoutes";
 import axios from 'axios';
-
-const registerRoute = 'http://localhost:8080/api/auth/register';
-const loginRoute = 'http://localhost:8080/api/auth/login';
 
 const Authenticate = () => {
   const navigate = useNavigate();

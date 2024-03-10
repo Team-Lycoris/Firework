@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import '../pages css/messages.css';
 import {Link, useNavigate} from 'react-router-dom';
+import { sendMessageRoute, getMessagesRoute, getGroupsRoute } from '../utils/apiRoutes';
 import axios from 'axios';
-
-const messageRoute = 'http://localhost:8080/api/user/test';
 
 const MessagesPage = () => {
   const navigate = useNavigate();
@@ -36,8 +35,14 @@ const MessagesPage = () => {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 
       // Request content from server
+      //getGroups();
     }
   }, []);
+
+  const getGroups = async () => {
+    const data = await axios.get(getGroupsRoute);
+    console.log(data);
+  }
 
   // Function to handle selecting a conversation
   const handleConversationSelect = (conversationId) => {
@@ -54,7 +59,7 @@ const MessagesPage = () => {
       setMessageInput('');
 
       // For testing
-      const res = await axios.post(messageRoute, {
+      const res = await axios.post(sendMessageRoute + '/' + selectedConversation, {
         message: messageInput
       });
 
