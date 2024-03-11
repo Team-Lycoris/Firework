@@ -1,8 +1,9 @@
 import {Router} from "express";
-import { test, createDM, getGroups, createGroup, getMessages, sendMessage } from '../controller/userController.js'
+import { test, getSelfInfo, createDM, getGroups, createGroup, getMessages, sendMessage } from '../controller/userController.js'
 
 const router = Router();
 
+router.get('/getSelfInfo/', getSelfInfo);
 router.post('/createDM/', createDM);
 router.get('/getGroups/', getGroups);
 router.post('/createGroup/', createGroup);

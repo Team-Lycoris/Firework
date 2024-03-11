@@ -10,15 +10,31 @@ export async function test(req, res, next) {
     }
 }
 
+export async function getSelfInfo(req, res, next) {
+    try {
+        const user = await User.findOne({ where: { id: req.userId }});
+        if (user === null) {
+            return res.json({status: false, msg: "User does not exist"});
+        }
+
+        const data = user.toJSON();
+
+        return res.json({status:true, userInfo: data});
+    } catch(ex) {
+        next(ex);
+    }
+}
+
 export async function createDM(req, res, next) {
     try {
         const sender = await User.findOne({ where: { id: req.userId }});
         const receiver = await User.findOne({ where: { id: req.body.otherUser }});
 
         const dm = await Group.create({name: null, isDm: true});
-        dm.addUsers(sender, receiver);
+        await dm.addUsers([sender, receiver]);
 
         console.log(dm);
+        console.log(await dm.getUsers());
 
         return res.json({status: true, dmId: dm.id});
     } catch(ex) {
@@ -43,7 +59,7 @@ export async function createGroup(req, res, next) {
 
         console.log(group);
 
-        return res.json({ status: true, groupId: group.id, groupName: group.name });
+        return res.json({ status: true, group: group.toJSON() });
     } catch(ex) {
         next(ex);
     }

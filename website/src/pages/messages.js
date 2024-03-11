@@ -1,48 +1,61 @@
 import React, {useState, useEffect} from 'react';
 import '../pages css/messages.css';
 import {Link, useNavigate} from 'react-router-dom';
-import { sendMessageRoute, getMessagesRoute, getGroupsRoute, createGroupRoute, createDMRoute } from '../utils/apiRoutes';
+import { sendMessageRoute, getMessagesRoute, getGroupsRoute, createGroupRoute, createDMRoute, getSelfInfoRoute } from '../utils/apiRoutes';
 import axios from 'axios';
+import Chat from '../components/Chat';
+import GroupList from '../components/GroupList';
 
 const MessagesPage = () => {
   const navigate = useNavigate();
   // State to keep track of the selected conversation
-  const [selectedConversation, setSelectedConversation] = useState(null);
-  const [messageInput, setMessageInput] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [groups, setGroups] = useState([]);
   const [showRequestForm, setShowRequestForm] = useState(false);
-  const [conversations, setConversations] = useState({
-    Conversation1: [
-      {content: 'Message 1 for conversation 1', type: 'text'},
-      {content: 'Message 2 for conversation 1', type: 'text'},
-    ],
-    Conversation2: [
-      {content: 'Message 1 for conversation 2', type: 'text'},
-      {content: 'Message 2 for conversation 2', type: 'text'},
-    ],
-    Conversation3: [
-      {content: 'Message 1 for conversation 3', type: 'text'},
-      {content: 'Message 2 for conversation 3', type: 'text'},
-    ]
-  });
+  const [user, setUser] = useState(null);
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem('user-token');
+  useEffect(() => {
+    const token = localStorage.getItem('user-token');
 
-  //   // Check if the user has a token
-  //   if (token === null) {
-  //     navigate('/login');
-  //   } else {
-  //     // Add token to header for requests
-  //     axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+    // Check if the user has a token
+    if (token === null) {
+      navigate('/login');
+    } else {
+      // Add token to header for requests
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 
-  //     // Request content from server
-  //     //getGroups();
-  //   }
-  // }, []);
+      // Request content from server
+      getSelfInfo();
+    }
+  }, []);
+  
+  async function getSelfInfo() {
+    const selfInfo = await axios.get(getSelfInfoRoute);
+    if (selfInfo.data.status) {
+      setUser(selfInfo.data.userInfo);
+      console.log(selfInfo.data.userInfo);
+    } else {
+      // Some kind of error occurred
+      console.error(selfInfo.data.msg)
+    }
+  }
 
-  const getGroups = async () => {
-    const data = await axios.get(getGroupsRoute);
-    console.log(data);
+  useEffect(() => {
+    getGroups(user);
+  }, [user])
+
+  async function getGroups(user) {
+    if (user) {
+      const res = await axios.get(getGroupsRoute);
+      if (res.data.status) {
+        setGroups(res.data.groups);
+        console.log(res.data.groups);
+      }
+      else {
+        // Some kind of error occurred
+        console.error(res.data.msg)
+      }
+    }
   }
 
   const createGroup = async () => {
@@ -53,7 +66,12 @@ const MessagesPage = () => {
         2
       ]
     });
-    console.log(res);
+    if (res.data.status) {
+      const updatedGroups = [...groups, res.data.group];
+      setGroups(updatedGroups);
+    } else {
+      console.error(res.data.msg);
+    }
   }
 
   const createDM = async () => {
@@ -63,59 +81,23 @@ const MessagesPage = () => {
     console.log(res);
   }
 
-  const getMessages = async () => {
-    const res = await axios.get(getMessagesRoute + '/' + '2');
-    console.log(res);
-  }
-
   // Function to handle selecting a conversation
   const handleConversationSelect = (conversationId) => {
-    setSelectedConversation(conversationId);
+    setSelectedGroup(conversationId);
   };
 
-  const sendMessage = async () => {
-    if (messageInput !== '' && selectedConversation) {
-      const updatedConversations = {
-        ...conversations,
-        [selectedConversation]: [...conversations[selectedConversation], {content: messageInput, type: 'text'}]
-      };
-      setConversations(updatedConversations);
-      setMessageInput('');
-
-      // For testing
-      const res = await axios.post(sendMessageRoute + '/' + selectedConversation, {
-        message: messageInput
-      });
-
-      if (res.data.status) {
-        // The message was sent
-        console.log("Message sent:", messageInput);
-      } else {
-        // An error was returned by the server
-        console.log(res.data.msg);
-      }
-    }
-  }
-
   const sendLocation = () => {
+    /*
     const embeddedMessage = {content: "My location!", type: "location"};
     if (selectedConversation){
-      const updateConversation = {
-        ...conversations,
-        [selectedConversation]: [...conversations[selectedConversation], embeddedMessage]
-      };
-      setConversations(updateConversation);
+        const updateConversation = {
+            ...conversations,
+            [selectedConversation]: [...conversations[selectedConversation], embeddedMessage]
+        };
+        setConversations(updateConversation);
     }
-  }
-
-  const getConversation = () => {
-    if (selectedConversation) {
-      return conversations[selectedConversation];
-    }
-    else {
-      return [];
-    }
-  }
+    */
+}
 
   const handleConversationRequest = async (e) => {
     e.preventDefault();
@@ -131,33 +113,21 @@ const MessagesPage = () => {
 
   return (
     <div className="messaging-container">
-      <div className="conversations-list">
-      {Object.keys(conversations).map((conversationId) => (
-        <div className="conversation" key={conversationId}>
-            <button 
-              className={`button conversation-select ${
-                selectedConversation === conversationId ?
-                'active-person' : '' }`}
-                onClick={() => handleConversationSelect(conversationId)} 
-              >{conversationId}
-            </button>
-        </div>
-      ))}
-      </div>
 
-      <div className="chat-display">
-        {getConversation().map((message, index) => (
-          <div className="message" key={index}>{
-            message.type === 'text' ? 
-           <p>{message.content}</p> :
-            <Link to="/map">My Location</Link>
-          }
-            </div>))}
+      <GroupList groups={groups} selectGroup={setSelectedGroup} />
 
+      <Chat selectedGroup={selectedGroup}/>
+
+      <Link to="/">
+        <button className="back-button">Go Back</button>
+      </Link>
+      
       <div className="feature-buttons">
         <Link to="/">
           <button className="back-button">Go Back</button>
         </Link>
+        
+        <button onClick={createGroup}>Create group</button>
 
        <div className="conversation-request-form">
           <form onSubmit={handleConversationRequest}>
@@ -172,17 +142,6 @@ const MessagesPage = () => {
 
         <div className="location-send">
           <button onClick={sendLocation}>Send my location</button> 
-        </div>
-      </div>
-
-        <div className="message-input">
-          <input 
-          type="text" 
-          placeholder="Type a message..." 
-          value={messageInput}
-          onChange={(e) => setMessageInput(e.target.value)}
-          />
-          <button onClick={sendMessage}>Send</button>
         </div>
       </div>
     </div>
