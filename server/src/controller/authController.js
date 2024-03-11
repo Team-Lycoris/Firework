@@ -15,7 +15,7 @@ export async function register(req, res, next) {
         }
 
         // Check that a user with the given username doesn't already exist in auth db
-        const existingAuth = await UserHash.findOne({ where: { user: username }});
+        const existingAuth = await UserHash.findOne({ where: { username: username }});
         if (existingAuth !== null) {
             return res.json({status: false, msg: "User already exists"});
         }
