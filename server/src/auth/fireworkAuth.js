@@ -24,11 +24,6 @@ export default class FireworkAuth extends Sequelize {
 		UserHash.create({ user: user, hash: hash });
 	}
 
-	// returns (JWT, error)
-	// returns a JWT if the provided credentials are valid, otherwise null
-	// if an error occured, it's returned as a string, otherwise null
-	//
-	// probably should change to throwing errors like the other functions
 	async issueJWT(userId) {
 		return jwt.sign({
 			userId: userId,

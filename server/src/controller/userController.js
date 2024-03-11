@@ -55,7 +55,7 @@ export async function getGroups(req, res, next) {
         if (user === null) {
             return res.json({status: false, msg: "User does not exist"});
         }
-        
+
         const query = await user.getGroups();
 
         const groups = query.map(grp => grp.toJSON());
@@ -76,7 +76,7 @@ export async function getMessages(req, res, next) {
         const query = await group.getMessages();
 
         const messages = query.map(msg => msg.toJSON());
-        
+
         return res.json({status: true, messages: messages});
     } catch(ex) {
         next(ex);
@@ -94,7 +94,7 @@ export async function sendMessage(req, res, next) {
         if (group === null) {
             return res.json({status: false, msg: "Group does not exist"});
         }
-        sender.sendMessage(content, group);
+        sender.sendMessage(content, group.id);
         return res.json({status: true});
     } catch(ex) {
         next(ex);

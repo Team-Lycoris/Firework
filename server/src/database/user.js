@@ -2,6 +2,8 @@ import { Model, DataTypes } from "sequelize";
 import Message from "./message.js";
 import MessageVisibility from "./messageVisibility.js";
 import Event from "./event.js";
+import GroupInvite from "./groupInvite.js";
+import FriendInvite from "./friendInvite.js";
 
 export default class User extends Model {
 	static initialize(sequelize) {
@@ -27,16 +29,28 @@ export default class User extends Model {
 	}
 
 	static async createUser(username, displayName) {
-		return User.create({ username: username, displayName: displayName });
+		return await User.create({ username: username, displayName: displayName });
 	}
 
-	async sendMessage(content, group, eventId = null) {
+	async sendMessage(content, groupId, eventId = null) {
 		const message = await Message.create({ author: this.id, content: content, event: eventId });
-		await MessageVisibility.create({ MessageId: message.id, GroupId: group.id });
+		await MessageVisibility.create({ MessageId: message.id, GroupId: groupId });
 		return message;
 	}
 
 	async createEvent(name, location, startTime, endTime) {
 		return await Event.create({ author: this.id, name: name, location: location, startTime: startTime, endTime: endTime });
+	}
+
+	async inviteFriend(inviteeId) {
+		return await FriendInvite.create({ inviter: this.id, invitee: inviteeId });
+	}
+
+	async getInvites() {
+		return await GroupInvite.findAll({
+			where: {
+				invitee: this.id
+			}
+		})
 	}
 }
