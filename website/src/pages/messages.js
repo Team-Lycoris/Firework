@@ -9,6 +9,7 @@ const MessagesPage = () => {
   // State to keep track of the selected conversation
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageInput, setMessageInput] = useState('');
+  const [showRequestForm, setShowRequestForm] = useState(false);
   const [conversations, setConversations] = useState({
     Conversation1: [
       {content: 'Message 1 for conversation 1', type: 'text'},
@@ -24,20 +25,20 @@ const MessagesPage = () => {
     ]
   });
 
-  useEffect(() => {
-    const token = localStorage.getItem('user-token');
+  // useEffect(() => {
+  //   const token = localStorage.getItem('user-token');
 
-    // Check if the user has a token
-    if (token === null) {
-      navigate('/login');
-    } else {
-      // Add token to header for requests
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+  //   // Check if the user has a token
+  //   if (token === null) {
+  //     navigate('/login');
+  //   } else {
+  //     // Add token to header for requests
+  //     axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 
-      // Request content from server
-      //getGroups();
-    }
-  }, []);
+  //     // Request content from server
+  //     //getGroups();
+  //   }
+  // }, []);
 
   const getGroups = async () => {
     const data = await axios.get(getGroupsRoute);
@@ -93,9 +94,20 @@ const MessagesPage = () => {
     }
   }
 
+  const handleConversationRequest = async (e) => {
+    e.preventDefault();
+    const username = e.target.elements.username.value;
+    try {
+      // Send a request to the server to initiate a conversation with the specified username
+      const response = await axios.post('/api/conversations/request', { username });
+      console.log(response.data); // Log the response from the server
+    } catch (error) {
+      console.error('Error requesting conversation:', error);
+    }
+  };
+
   return (
     <div className="messaging-container">
-
       <div className="conversations-list">
       {Object.keys(conversations).map((conversationId) => (
         <div className="conversation" key={conversationId}>
@@ -119,6 +131,27 @@ const MessagesPage = () => {
           }
             </div>))}
 
+      <div className="feature-buttons">
+        <Link to="/">
+          <button className="back-button">Go Back</button>
+        </Link>
+
+       <div className="conversation-request-form">
+          <form onSubmit={handleConversationRequest}>
+           <input
+             type="text"
+             placeholder="Enter username"
+             name="username"
+           />
+            <button type="submit">Request Conversation</button>
+          </form>
+        </div>
+
+        <div className="location-send">
+          <button onClick={sendLocation}>Send my location</button> 
+        </div>
+      </div>
+
         <div className="message-input">
           <input 
           type="text" 
@@ -129,15 +162,6 @@ const MessagesPage = () => {
           <button onClick={sendMessage}>Send</button>
         </div>
       </div>
-
-      <Link to="/">
-        <button className="back-button">Go Back</button>
-      </Link>
-
-      <div className="location-send">
-        <button onClick={sendLocation}>Send my location</button> 
-      </div>
-      
     </div>
   );
 };
