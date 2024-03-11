@@ -25,7 +25,7 @@ const MessagesPage = () => {
     ]
   });
 
-  useEffect(() => {
+ useEffect(() => {
     const token = localStorage.getItem('user-token');
 
     // Check if the user has a token
@@ -68,16 +68,74 @@ const MessagesPage = () => {
     }
   }
 
+
+ /* const GetLocation = () =>{
+    const [userLocation, setLocation] = useState({ latitude: null, longitude: null });
+    if(navigator.geolocation)
+    {
+      navigator.geolocation.getCurrentPosition(
+        (position) => 
+        {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+
+          //change to store in database
+        });
+
+        console.log('got location');
+
+      },
+      (error) => {
+        console.log('Error getting location');
+      }
+      );
+    }
+    else {
+      console.log("Geolocation not supported");
+    }
+    return userLocation;
+  };*/
+
   const sendLocation = () => {
-    const embeddedMessage = {content: "My location!", type: "location"};
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const embeddedMessage = { content: "My location!", type: "location", latitude, longitude };
+
+          if (selectedConversation) {
+            
+            const updateConversation = {
+              ...conversations,
+              [selectedConversation]: [...conversations[selectedConversation], embeddedMessage],
+            };
+            setConversations(updateConversation);
+          }
+        },
+        (error) => {
+          console.log('Error getting location', error);
+        }
+      );
+    } else {
+      console.log("Geolocation not supported");
+    }
+  };
+  /*
+  const sendLocation = () => {
+
+    const embeddedMessage = {content: "My location!", type: "location", latitude: GetLocation.latitude, longitude: GetLocation.longitude};
     if (selectedConversation){
       const updateConversation = {
         ...conversations,
         [selectedConversation]: [...conversations[selectedConversation], embeddedMessage]
+
       };
       setConversations(updateConversation);
     }
-  }
+  }*/
+
+
 
   const getConversation = () => {
     if (selectedConversation) {
@@ -110,7 +168,7 @@ const MessagesPage = () => {
           <div className="message" key={index}>{
             message.type === 'text' ? 
            <p>{message.content}</p> :
-            <Link to="/map">My Location</Link>
+            <Link to={`/map?lat=${message.latitude}&lng=${message.longitude}`}>My Location</Link>
           }
             </div>))}
 

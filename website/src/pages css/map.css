@@ -1,0 +1,10 @@
+.header {
+    background-color: #333; /* Set your desired background color */
+    color: #fff; /* Set your desired text color */
+    padding: 20px;
+    text-align: center;
+  }
+  
+.h1 {
+    margin: 0; /* Remove default margin for h1 */
+  }
