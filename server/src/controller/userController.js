@@ -10,20 +10,92 @@ export async function test(req, res, next) {
     }
 }
 
+export async function createDM(req, res, next) {
+    try {
+        const sender = await User.findOne({ where: { id: req.userId }});
+        const receiver = await User.findOne({ where: { id: req.body.otherUser }});
+
+        const dm = await Group.create({name: null, isDm: true});
+        dm.addUsers(sender, receiver);
+
+        console.log(dm);
+
+        return res.json({status: true, dmId: dm.id});
+    } catch(ex) {
+        next(ex);
+    }
+}
+
+export async function createGroup(req, res, next) {
+    try {
+        const user = await User.findOne({ where: { id: req.userId }});
+        if (user === null) {
+            return res.json({status: false, msg: "User does not exist"});
+        }
+
+        const group = await Group.create({ name: req.body.groupName });
+        await group.addUser(user);
+
+        await Promise.all(req.body.userIds.map(async (id) => {
+            const additionalUser = await User.findOne({ where: { id: id }});
+            await group.addUser(additionalUser);
+        }));
+
+        console.log(group);
+
+        return res.json({ status: true, groupId: group.id, groupName: group.name });
+    } catch(ex) {
+        next(ex);
+    }
+}
+
 export async function getGroups(req, res, next) {
     try {
-        const user = await User.findOne({ where: {id: req.userId} });
-        /*
-        const user2 = await User.findOne({ where: {id: 1}});
-        const group = await Group.create({ name: 'test' });
-        await user.addGroup(group);
-        await user2.addGroup(group);
-        */
+        const user = await User.findOne({ where: { id: req.userId }});
+        if (user === null) {
+            return res.json({status: false, msg: "User does not exist"});
+        }
+        
         const query = await user.getGroups();
 
         const groups = query.map(grp => grp.toJSON());
 
         return res.json({status: true, groups: groups});
+    } catch(ex) {
+        next(ex);
+    }
+}
+
+export async function getMessages(req, res, next) {
+    try {
+        const group = await Group.findOne({ where: { id: req.params.groupId }});
+        if (group === null) {
+            return res.json({status: false, msg: "Group does not exist"});
+        }
+
+        const query = await group.getMessages();
+
+        const messages = query.map(msg => msg.toJSON());
+        
+        return res.json({status: true, messages: messages});
+    } catch(ex) {
+        next(ex);
+    }
+}
+
+export async function sendMessage(req, res, next) {
+    try {
+        const content = req.body.message;
+        const sender = await User.findOne({ where: { id: req.userId }});
+        if (sender === null) {
+            return res.json({status: false, msg: "Sender does not exist"});
+        }
+        const group = await Group.findOne({ where: { id: req.params.groupId }});
+        if (group === null) {
+            return res.json({status: false, msg: "Group does not exist"});
+        }
+        sender.sendMessage(content, group);
+        return res.json({status: true});
     } catch(ex) {
         next(ex);
     }
