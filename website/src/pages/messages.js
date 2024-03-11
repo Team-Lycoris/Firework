@@ -5,6 +5,7 @@ import { sendMessageRoute, getMessagesRoute, getGroupsRoute, createGroupRoute, c
 import axios from 'axios';
 import Chat from '../components/Chat';
 import GroupList from '../components/GroupList';
+import ChatInput from '../components/ChatInput';
 
 const MessagesPage = () => {
   const navigate = useNavigate();
@@ -13,21 +14,26 @@ const MessagesPage = () => {
   const [groups, setGroups] = useState([]);
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [user, setUser] = useState(null);
+  const [showRequestModal, setShowRequestModal] = useState(false);
 
- useEffect(() => {
-    const token = localStorage.getItem('user-token');
+  const handleRequestButtonClick = () => {
+    setShowRequestForm(!showRequestForm);
+  };
 
-    // Check if the user has a token
-    if (token === null) {
-      navigate('/login');
-    } else {
-      // Add token to header for requests
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+//  useEffect(() => {
+//     const token = localStorage.getItem('user-token');
 
-      // Request content from server
-      getSelfInfo();
-    }
-  }, []);
+//     // Check if the user has a token
+//     if (token === null) {
+//       navigate('/login');
+//     } else {
+//       // Add token to header for requests
+//       axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+
+//       // Request content from server
+//       getSelfInfo();
+//     }
+//   }, []);
   
   async function getSelfInfo() {
     const selfInfo = await axios.get(getSelfInfoRoute);
@@ -87,10 +93,6 @@ const MessagesPage = () => {
   };
 
 
- 
-
-
-
   const handleConversationRequest = async (e) => {
     e.preventDefault();
     const username = e.target.elements.username.value;
@@ -110,17 +112,41 @@ const MessagesPage = () => {
 
       <Chat selectedGroup={selectedGroup}/>
 
-      <Link to="/">
-        <button className="back-button">Go Back</button>
-      </Link>
+      {showRequestModal && (
+  <div className="request-modal">
+    <div className="request-modal-content">
+      <input
+        type="text"
+        placeholder="Enter username"
+        // Setup onChange to update a state variable with the input's value
+      />
+      <button onClick={() => {
+        // Implement sending request functionality here
+        setShowRequestModal(false); // Hide modal after sending request
+      }}>Send Request</button>
+      <button onClick={() => setShowRequestModal(false)}>Cancel</button>
+    </div>
+  </div>
+)}
+
       
       <div className="feature-buttons">
         <Link to="/">
-          <button className="back-button">Go Back</button>
+          <button className="home-button">Home</button>
         </Link>
         
         <button onClick={createGroup}>Create group</button>
 
+        {/* {!showRequestForm && (
+        <button onClick={handleRequestButtonClick}>Request Conversation</button>
+        )} */}
+
+        <button onClick={() => setShowRequestModal(true)}>Send Request</button>
+
+        <button className='see-invites'>Invites</button>
+
+
+      {/* {showRequestForm && (
        <div className="conversation-request-form">
           <form onSubmit={handleConversationRequest}>
            <input
@@ -131,7 +157,7 @@ const MessagesPage = () => {
             <button type="submit">Request Conversation</button>
           </form>
         </div>
-
+      )} */}
         
       </div>
     </div>

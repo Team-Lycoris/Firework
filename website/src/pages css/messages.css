@@ -65,20 +65,75 @@
   .message-input button:hover {
     background-color: #0056b3;
   }
+
+    button, .button {
+    padding: 10px 20px; /* Uniform padding */
+    border: none; /* Removes the default border */
+    background-color: #ffffff; /* Primary button color */
+    color: rgb(14, 7, 7); /* Text color */
+    font-size: 16px; /* Adjust based on your design */
+    border-radius: 5px; /* Rounded corners for a modern look */
+    cursor: pointer; /* Indicates an interactive element */
+    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for interactions */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Adds a subtle shadow */
+    margin-right: 10px;
+  }
   
+
   .feature-buttons {
     position: fixed;
-    bottom: 0;
-    width: 100%;
+    bottom: 10px;
+    right: 10px; /* Adjust this to create space on the right */
+    left: 0; /* Adjust if you also want to control spacing from the left */
     background-color: #fff; 
-    padding: 5px; 
+    padding: 5px;
     display: flex;
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 10px; 
+    justify-content: flex-end; /* Use this to align items to the right */
+    align-items: center;
+    gap: 10px; /* Controls spacing between children */
   }
 
   .location-send button {
     margin-bottom: 10px;
     padding: 5px;
   }
+
+@keyframes slideDown {
+  from {
+      opacity: 0;
+      transform: translateY(-50px); /* Adjust as needed for the start position */
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+
+.request-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.request-modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* Add more styling as needed */
+}
+
+.request-modal-content input[type="text"] {
+  height: 40px; /* Adjust to match button height */
+  padding: 0 10px; /* Adjust padding to match button padding, if necessary */
+  margin: 0 10px 10px 0; /* Adjust margins for spacing */
+  border: 1px solid #ccc; /* Match border styling as buttons, if needed */
+  border-radius: 5px; /* Rounded corners to match buttons */
+}
