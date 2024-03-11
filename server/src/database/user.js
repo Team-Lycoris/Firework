@@ -4,6 +4,7 @@ import MessageVisibility from "./messageVisibility.js";
 import Event from "./event.js";
 import GroupInvite from "./groupInvite.js";
 import FriendInvite from "./friendInvite.js";
+import GroupMembership from "./groupMembership.js";
 
 export default class User extends Model {
 	static initialize(sequelize) {
@@ -33,6 +34,10 @@ export default class User extends Model {
 	}
 
 	async sendMessage(content, groupId, eventId = null) {
+		// check if user is actually belongs to the group
+		if (!(await this.getGroups()).find((group) => group.id === groupId))
+			throw "User does not belong to group."
+
 		const message = await Message.create({ author: this.id, content: content, event: eventId });
 		await MessageVisibility.create({ MessageId: message.id, GroupId: groupId });
 		return message;
@@ -43,10 +48,22 @@ export default class User extends Model {
 	}
 
 	async inviteFriend(inviteeId) {
+		// check if user is trying to invite themself
+		if (inviteeId === this.id)
+			throw "Cannot invite yourself."
+
 		return await FriendInvite.create({ inviter: this.id, invitee: inviteeId });
 	}
 
-	async getInvites() {
+	async getFriendInvites() {
+		return await FriendInvite.findAll({
+			where: {
+				invitee: this.id
+			}
+		})
+	}
+
+	async getGroupInvites() {
 		return await GroupInvite.findAll({
 			where: {
 				invitee: this.id
