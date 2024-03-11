@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import '../pages css/messages.css';
 import {Link, useNavigate} from 'react-router-dom';
-import { sendMessageRoute, getMessagesRoute, getGroupsRoute } from '../utils/apiRoutes';
+import { sendMessageRoute, getMessagesRoute, getGroupsRoute, createGroupRoute, createDMRoute } from '../utils/apiRoutes';
 import axios from 'axios';
 
 const MessagesPage = () => {
@@ -43,6 +43,29 @@ const MessagesPage = () => {
   const getGroups = async () => {
     const data = await axios.get(getGroupsRoute);
     console.log(data);
+  }
+
+  const createGroup = async () => {
+    const res = await axios.post(createGroupRoute, {
+      groupName: 'test',
+      userIds: [
+        1,
+        2
+      ]
+    });
+    console.log(res);
+  }
+
+  const createDM = async () => {
+    const res = await axios.post(createDMRoute, {
+      otherUser: 1
+    });
+    console.log(res);
+  }
+
+  const getMessages = async () => {
+    const res = await axios.get(getMessagesRoute + '/' + '2');
+    console.log(res);
   }
 
   // Function to handle selecting a conversation

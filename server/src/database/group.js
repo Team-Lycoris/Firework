@@ -13,8 +13,11 @@ export default class Group extends Model {
 				primaryKey: true
 			},
 			name: {
-				type: DataTypes.STRING,
-				allowNull: false
+				type: DataTypes.STRING
+			},
+			isDm: {
+				type: DataTypes.BOOLEAN,
+				defaultValue: false
 			}
 		}, {
 			sequelize: sequelize,
