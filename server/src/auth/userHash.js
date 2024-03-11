@@ -3,8 +3,13 @@ import { DataTypes, Model } from "sequelize";
 export default class UserHash extends Model {
 	static initialize(sequelize) {
 		UserHash.init({
-			user: {
+			userId: {
 				type: DataTypes.INTEGER,
+				allowNull: false,
+				unique: true
+			},
+			username: {
+				type: DataTypes.STRING,
 				allowNull: false,
 				unique: true
 			},

@@ -19,9 +19,9 @@ export default class FireworkAuth extends Sequelize {
 		InvalidJwt.initialize(this);
 	}
 
-	async registerUser(user, password) {
+	async registerUser(userId, username, password) {
 		const hash = await bcrypt.hash(password, SALT_ROUNDS);
-		UserHash.create({ user: user, hash: hash });
+		UserHash.create({ userId: userId, username: username, hash: hash });
 	}
 
 	async issueJWT(userId) {

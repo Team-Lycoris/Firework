@@ -26,12 +26,12 @@ export async function register(req, res, next) {
             return res.json({status: false, msg: "User already exists"});
         }
 
-        // Store the hashed version of the user's password
-        const hash = await bcrypt.hash(password, saltRounds);
-        const auth = await UserHash.create({ user: username, hash: hash });
-
         // Create a user in the data db
         const user = await User.create({ username: username, displayName: username });
+
+        // Store the hashed version of the user's password
+        const hash = await bcrypt.hash(password, saltRounds);
+        const auth = await UserHash.create({ userId: user.id, username: username, hash: hash });
 
         console.log(user);
 
@@ -48,14 +48,14 @@ export async function register(req, res, next) {
 export async function login(req, res, next) {
     try {
         const {username, password} = req.body;
-        
+
         // Check the validity of the given username and password format
         if (!isValidUsername(username) || !isValidPassword(password)) {
             return res.json({status: false, msg: "Invalid username or password format"});
         }
 
         // Check that a user with the given username exists in the auth db
-        const authUser = await UserHash.findOne({ where: { user: username }});
+        const authUser = await UserHash.findOne({ where: { username: username }});
         if (authUser === null) {
             return res.json({status: false, msg: "Incorrect username or password"});
         }
