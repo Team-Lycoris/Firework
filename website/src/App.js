@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from "./pages";
 import Authenticate from './pages/login';
 import MessagesPage from './pages/messages';
+import Loc from './pages/map';
 
 //import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 //import Home from './Home';
@@ -18,6 +19,7 @@ function App() {
           <Route path="/" element={<Home/>} />
           <Route path="/login" element={<Authenticate/>} />
           <Route path="/messages" element={<MessagesPage/>} />
+          <Route path="/map" element={<Loc/>} />
         </Routes>
     </BrowserRouter>
   );

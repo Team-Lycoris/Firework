@@ -14,7 +14,7 @@ const MessagesPage = () => {
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
+ useEffect(() => {
     const token = localStorage.getItem('user-token');
 
     // Check if the user has a token
@@ -86,16 +86,81 @@ const MessagesPage = () => {
     setSelectedGroup(conversationId);
   };
 
+
+ /* const GetLocation = () =>{
+    const [userLocation, setLocation] = useState({ latitude: null, longitude: null });
+    if(navigator.geolocation)
+    {
+      navigator.geolocation.getCurrentPosition(
+        (position) => 
+        {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+
+          //change to store in database
+        });
+
+        console.log('got location');
+
+      },
+      (error) => {
+        console.log('Error getting location');
+      }
+      );
+    }
+    else {
+      console.log("Geolocation not supported");
+    }
+    return userLocation;
+  };*/
+
   const sendLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const embeddedMessage = { content: "My location!", type: "location", latitude, longitude };
+
+          if (selectedConversation) {
+            
+            const updateConversation = {
+              ...conversations,
+              [selectedConversation]: [...conversations[selectedConversation], embeddedMessage],
+            };
+            setConversations(updateConversation);
+          }
+        },
+        (error) => {
+          console.log('Error getting location', error);
+        }
+      );
+    } else {
+      console.log("Geolocation not supported");
+    }
+  };
+  /*
+  const sendLocation = () => {
+
+    const embeddedMessage = {content: "My location!", type: "location", latitude: GetLocation.latitude, longitude: GetLocation.longitude};
     /*
     const embeddedMessage = {content: "My location!", type: "location"};
     if (selectedConversation){
+      const updateConversation = {
+        ...conversations,
+        [selectedConversation]: [...conversations[selectedConversation], embeddedMessage]
+
+      };
+      setConversations(updateConversation);
         const updateConversation = {
             ...conversations,
             [selectedConversation]: [...conversations[selectedConversation], embeddedMessage]
         };
         setConversations(updateConversation);
     }
+  }*/
+
+
     */
 }
 
@@ -116,6 +181,25 @@ const MessagesPage = () => {
 
       <GroupList groups={groups} selectGroup={setSelectedGroup} />
 
+      <div className="chat-display">
+        {getConversation().map((message, index) => (
+          <div className="message" key={index}>{
+            message.type === 'text' ? 
+           <p>{message.content}</p> :
+            <Link to={`/map?lat=${message.latitude}&lng=${message.longitude}`}>My Location</Link>
+          }
+            </div>))}
+
+        <div className="message-input">
+          <input 
+          type="text" 
+          placeholder="Type a message..." 
+          value={messageInput}
+          onChange={(e) => setMessageInput(e.target.value)}
+          />
+          <button onClick={sendMessage}>Send</button>
+        </div>
+      </div>
       <Chat selectedGroup={selectedGroup}/>
 
       <Link to="/">
