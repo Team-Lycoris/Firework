@@ -24,8 +24,8 @@ await auth.sync({ force: true });
 await test();
 
 async function test() {
-	const richard = await User.createUser("Richard", "Richard", "yeet");
-	await auth.registerUser(richard.id, "password");
+	const richard = await User.createUser("Richard", "Richard");
+	await auth.registerUser(richard.id, "Richard", "password");
 	const group = await Group.create({ name: "gaming" });
 	await group.addUser(richard);
 
@@ -33,8 +33,8 @@ async function test() {
 	await richard.sendMessage("test", group.id);
 	await richard.sendMessage("yup", group.id);
 
-	const bobby = await User.createUser("bobby", "bobby", "yeet");
-	await auth.registerUser(bobby.id, "correcthorsebatterystaple");
+	const bobby = await User.createUser("bobby", "bobby");
+	await auth.registerUser(bobby.id, "bobby", "correcthorsebatterystaple");
 	await group.addUser(bobby);
 	await bobby.sendMessage("testtsetset", group.id);
 
@@ -63,6 +63,16 @@ async function test() {
 	// console.log(dm)
 	await richard.sendMessage("frieng", dm.id);
 	await bobby.sendMessage("friiiiend", dm.id);
+
+	const testGroup1 = await Group.create({ name: "test1" });
+	const testGroup2 = await Group.create({ name: "test2" });
+	const testGroup3 = await Group.create({ name: "test3" });
+
+	await testGroup1.addUser(richard);
+	await testGroup2.addUser(richard);
+	await testGroup3.addUser(richard);
+
+	await richard.broadcastMessage("broadcast", [testGroup1.id, testGroup2.id, testGroup3.id]);
 }
 
 const PORT = 8080;

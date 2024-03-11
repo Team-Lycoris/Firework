@@ -43,6 +43,17 @@ export default class User extends Model {
 		return message;
 	}
 
+	async broadcastMessage(content, groupIds, eventId = null) {
+		// check if user actually belongs to the groups
+		const correctGroupIds = (await this.getGroups()).map((group) => group.id);
+		if (!groupIds.every((groupId) => correctGroupIds.includes(groupId)))
+			throw "User does not belong to one of the groups."
+
+		const message = await Message.create({ author: this.id, content: content, event: eventId });
+		const messageVisibilities = groupIds.map((groupId) => ({ MessageId: message.id, GroupId: groupId }));
+		await MessageVisibility.bulkCreate(messageVisibilities);
+	}
+
 	async createEvent(name, location, startTime, endTime) {
 		return await Event.create({ author: this.id, name: name, location: location, startTime: startTime, endTime: endTime });
 	}
