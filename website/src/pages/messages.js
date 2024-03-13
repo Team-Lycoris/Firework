@@ -6,6 +6,7 @@ import axios from 'axios';
 import Chat from '../components/Chat';
 import GroupList from '../components/GroupList';
 import ChatInput from '../components/ChatInput';
+import CreateGroupModal from '../components/CreateGroupModal';
 
 const MessagesPage = () => {
   const navigate = useNavigate();
@@ -15,8 +16,9 @@ const MessagesPage = () => {
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [user, setUser] = useState(null);
   const [showRequestModal, setShowRequestModal] = useState(false);
-  const [requestUsername, setRequestUsername] = useState('');
+  const [inviteUsername, setInviteUsername] = useState('');
   const [requestError, setRequestError] = useState('');
+  const [showGroupModal, setShowGroupModal] = useState(false);
 
   const handleRequestButtonClick = () => {
     setShowRequestForm(!showRequestForm);
@@ -101,13 +103,13 @@ const MessagesPage = () => {
       setRequestError('');
       // Send a request to the server to initiate a conversation with the specified username
       const response = await axios.post(sendFriendInviteRoute, { 
-        inviteeUsername: requestUsername
+        inviteeUsername: inviteUsername
       });
       console.log(response.data); // Log the response from the server
 
       if (response.data.status) {
         setShowRequestModal(false); // Hide modal after sending request
-        setRequestUsername('');
+        setInviteUsername('');
       } else {
         setRequestError(response.data.msg);
         console.error(response.data.msg);
@@ -131,13 +133,12 @@ const MessagesPage = () => {
       <input
         type="text"
         placeholder="Enter username"
-        onChange={(e) => setRequestUsername(e.target.value)}
-        // Setup onChange to update a state variable with the input's value
+        onChange={(e) => setInviteUsername(e.target.value)}
       />
       <button onClick={handleConversationRequest}>Send Request</button>
       <button onClick={() => {
         setShowRequestModal(false);
-        setRequestUsername('');
+        setInviteUsername('');
       }}>Cancel</button>
       {requestError &&
         <div className="request-error">{requestError}</div>
@@ -146,13 +147,20 @@ const MessagesPage = () => {
   </div>
 )}
 
+        <CreateGroupModal
+          showModal={showGroupModal} 
+          setShowModal={setShowGroupModal}
+          setGroups={setGroups}
+        />
+      
+
       
       <div className="feature-buttons">
         <Link to="/">
           <button className="home-button">Home</button>
         </Link>
         
-        <button onClick={createGroup}>Create group</button>
+        <button onClick={() => setShowGroupModal(true)}>Create Group</button>
 
         {/* {!showRequestForm && (
         <button onClick={handleRequestButtonClick}>Request Conversation</button>
