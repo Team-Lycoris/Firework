@@ -62,8 +62,8 @@
   }
 
   .message-container {
-    min-width: 20%;
-    max-width: 70%
+    /* min-width: 10%; */
+    max-width: 60%;
   }
 
   .message-container.other {

@@ -12,6 +12,34 @@ export async function test(req, res, next) {
     }
 }
 
+export async function getIncomingFriendInvites(req, res, next) {
+    try {
+        const user = await User.findOne({ where: { id: req.userId }});
+        if (user === null) {
+            return res.json({status: false, msg: "User does not exist"});
+        }
+        const invites = await FriendInvite.findAll({ where: { invitee: user.id}});
+
+        return res.json({status:true, invites: invites.toJSON()});
+    } catch(ex) {
+        next(ex);
+    }
+}
+
+export async function getOutgoingFriendInvites(req, res, next) {
+    try {
+        const user = await User.findOne({ where: { id: req.userId }});
+        if (user === null) {
+            return res.json({status: false, msg: "User does not exist"});
+        }
+        const invites = await FriendInvite.findAll({ where: { inviter: user.id}});
+
+        return res.json({status:true, invites: invites.toJSON()});
+    } catch(ex) {
+        next(ex);
+    }
+}
+
 export async function sendFriendInvite(req, res, next) {
     try {
         const inviter = await User.findOne({ where: { id: req.userId }});
@@ -24,7 +52,7 @@ export async function sendFriendInvite(req, res, next) {
         }
         const invite = await FriendInvite.create({ inviter: inviter.id, invitee: invitee.id });
 
-        return res.json({status: true, invite: invite});
+        return res.json({status: true, invite: invite.toJSON()});
     } catch(ex) {
         next(ex);
     }
@@ -34,7 +62,7 @@ export async function acceptFriendInvite(req, res, next) {
     try {
         const invite = await FriendInvite.findOne({ where: { invitee: req.userId, inviter: req.body.inviterId }});
         const group = await invite.startFriendship();
-        return res.json({status: true, group: group});
+        return res.json({status: true, group: group.toJSON()});
     } catch(ex) {
         next(ex);
     }
