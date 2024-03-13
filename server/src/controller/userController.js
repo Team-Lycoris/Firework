@@ -32,9 +32,11 @@ export async function getOutgoingFriendInvites(req, res, next) {
         if (user === null) {
             return res.json({status: false, msg: "User does not exist"});
         }
-        const invites = await FriendInvite.findAll({ where: { inviter: user.id}});
+        const query = await FriendInvite.findAll({ where: { inviter: user.id}});
 
-        return res.json({status:true, invites: invites.toJSON()});
+        const invites = query.map(q => q.toJSON());
+
+        return res.json({status:true, invites: invites});
     } catch(ex) {
         next(ex);
     }
