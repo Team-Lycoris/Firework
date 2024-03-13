@@ -13,13 +13,13 @@ export async function test(req, res, next) {
 
 export async function sendFriendInvite(req, res, next) {
     try {
-        const inviter = await Group.findOne({ where: { id: req.userId }});
+        const inviter = await User.findOne({ where: { id: req.userId }});
         if (inviter === null) {
             return res.json({status: false, msg: "Inviter does not exist"});
         }
-        const invitee = await Group.findOne({ where: { id: req.body.inviteeId }});
+        const invitee = await User.findOne({ where: { username: req.body.inviteeUsername }});
         if (invitee === null) {
-            return res.json({status: false, msg: "Invitee does not exist"});
+            return res.json({status: false, msg: "User does not exist"});
         }
         const invite = await FriendInvite.create({ inviter: inviter.id, invitee: invitee.id });
 

@@ -8,6 +8,7 @@
     flex: 1;
     overflow-y: auto;
     border-right: 1px solid #ccc;
+    max-width: 200px;
   }
   
   .conversation {
