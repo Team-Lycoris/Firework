@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import '../pages css/messages.css';
 import {Link, useNavigate} from 'react-router-dom';
-import { sendMessageRoute, getMessagesRoute, getGroupsRoute, createGroupRoute, createDMRoute, getSelfInfoRoute, sendFriendInviteRoute, acceptFriendInviteRoute } from '../utils/apiRoutes';
+import { sendMessageRoute, getMessagesRoute, getGroupsRoute, createGroupRoute, createDMRoute, getSelfInfoRoute, sendFriendInviteRoute, acceptFriendInviteRoute, getIncomingFriendInvitesRoute, declineFriendInviteRoute } from '../utils/apiRoutes';
 import axios from 'axios';
 import Chat from '../components/Chat';
 import GroupList from '../components/GroupList';
@@ -62,21 +62,23 @@ const MessagesPage = () => {
 
   useEffect(() => {
     if(user) {
-      const fetchInvites = async () => {
-        try {
-          const response = await axios.get('/api/user/getIncomingFriendInvites');
-          if (response.data.status) {
-            setInvites(response.data.invites);
-            console.log(response.data.invites);
-          } else {
-            console.error(response.data.msg);
-          }
-        } catch (error) {
-          console.error('Failed to fetch invites');
-        }
-      }
+      fetchInvites();
     }
   }, [user]);
+
+  const fetchInvites = async () => {
+    try {
+      const response = await axios.get(getIncomingFriendInvitesRoute);
+      if (response.data.status) {
+        setInvites(response.data.invites);
+        console.log(response.data.invites);
+      } else {
+        console.error(response.data.msg);
+      }
+    } catch (error) {
+      console.error('Failed to fetch invites');
+    }
+  }
 
   useEffect(() => {
     getGroups(user);
@@ -147,7 +149,7 @@ const MessagesPage = () => {
 
   const handleAcceptInvite = async (invite) => {
     try {
-      const response = await axios.post('/api/user/acceptFriendInvite', { inviteId: invite.id });
+      const response = await axios.post(acceptFriendInviteRoute, { inviteId: invite.id });
       console.log(response.data); // Log the response from the server
     } catch (error) {
       console.error('Error accepting invite:', error);
@@ -156,7 +158,7 @@ const MessagesPage = () => {
   
   const handleDeclineInvite = async (invite) => {
     try {
-      const response = await axios.post('/api/user/declineFriendInvite', { inviteId: invite.id });
+      const response = await axios.post(declineFriendInviteRoute, { inviteId: invite.id });
       console.log(response.data); // Log the response from the server
     } catch (error) {
       console.error('Error declining invite:', error);
@@ -199,14 +201,15 @@ const MessagesPage = () => {
         <div className="invites-modal">
           <div className="invites-modal-content">
             <h2>Invites</h2>
-            <ul>
-              {invites.map((invites, index) => (
-                <li key={index}>
+            
+              {invites.map((invite, index) => (
+                <div key={index}>
+                  {invite.inviterName}
                   <button onClick={() => handleAcceptInvite(invites)}>Accept</button>
                   <button onClick={() => handleDeclineInvite(invites)}>Decline</button>
-                </li>
+                </div>
               ))}
-            </ul>
+          
             <button onClick={() => setShowInvitesModal(false)}>Cancel</button>
           </div>
         </div>
