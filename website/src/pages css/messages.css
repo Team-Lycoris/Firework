@@ -15,11 +15,22 @@
     border-bottom: 1px solid #ccc;
     cursor: pointer;
   }
+
+  .conversation-select{
+      padding: 20px;
+      width: 100%;
+      border-bottom: 1px solid #ccc;
+      cursor: pointer;
+  }
   
   .conversation:hover {
     background-color: #f0f0f0;
   }
   
+  .conversation-select:hover{
+    background-color: #87bff9;
+}
+
   .chat-display {
     flex: 3;
     display: flex;
