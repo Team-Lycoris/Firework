@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 const MIN_NAME_LENGTH = 2, MAX_NAME_LENGTH = 30;
 
-export default function CreateGroupModal({showModal, setShowModal, setGroups}) {
+export default function CreateGroupModal({showModal, setShowModal, setGroups, setSelectedGroup}) {
     const [newGroupName, setNewGroupName] = useState('');
     const [error, setError] = useState('');
 
@@ -41,8 +41,14 @@ export default function CreateGroupModal({showModal, setShowModal, setGroups}) {
             });
 
             if (res.data.status) {
-                setGroups(groups => [...groups, res.data.group]);
+                let newGroups;
+                setGroups((groups) => {
+                    newGroups = [...groups, res.data.group]
+                    return newGroups;
+                });
                 setNewGroupName('');
+                setShowModal(false);
+                setSelectedGroup(newGroups[newGroups.length-1]);
             } else {
                 setError(res.data.msg);
                 console.error(res.data.msg);
@@ -60,7 +66,8 @@ export default function CreateGroupModal({showModal, setShowModal, setGroups}) {
                     <div className='group-modal-content'>
                         <input
                             type="text"
-                            placeholder="Enter group name"
+                            placeholder="Enter your group's name"
+                            value={newGroupName}
                             onChange={(e) => setNewGroupName(e.target.value)}
                         />
                         <button onClick={handleCreateGroup}>Create Group</button>

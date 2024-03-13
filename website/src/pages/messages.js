@@ -156,8 +156,9 @@ const MessagesPage = () => {
 
       <GroupList groups={groups} selectGroup={setSelectedGroup} />
 
-      <Chat selectedGroup={selectedGroup} user={user}/>
-
+      {selectedGroup && 
+        <Chat selectedGroup={selectedGroup} user={user}/>
+      }
       {showRequestModal && (
   <div className="request-modal">
     <div className="request-modal-content">
@@ -216,11 +217,12 @@ const MessagesPage = () => {
       )}
 
 
-<CreateGroupModal
-          showModal={showGroupModal} 
-          setShowModal={setShowGroupModal}
-          setGroups={setGroups}
-        />
+      <CreateGroupModal
+        showModal={showGroupModal} 
+        setShowModal={setShowGroupModal}
+        setGroups={setGroups}
+        setSelectedGroup={setSelectedGroup}
+      />
       
       <div className="feature-buttons">
 
