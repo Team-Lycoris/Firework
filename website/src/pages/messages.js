@@ -21,16 +21,7 @@ const MessagesPage = () => {
   const [inviteUsername, setInviteUsername] = useState('');
   const [showInvitesModal, setShowInvitesModal] = useState(false);
   const [invites, setInvites] = useState([]);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [addUser, setAddUser] = useState('');
 
-  const handleRequestButtonClick = () => {
-    setShowRequestForm(!showRequestForm);
-  };
-
-  const handleInviteButtonClick = () => {
-    setShowInvitesModal(!showInvitesModal);
-  }
 
  useEffect(() => {
     const token = localStorage.getItem('user-token');
@@ -125,10 +116,6 @@ const MessagesPage = () => {
     }
   };
 
-  const handleAddRequest = async (e) => {
-    e.preventDefault();
-  }
-
   const handleAcceptInvite = async (invite) => {
     try {
       const response = await axios.post('/api/invites/accept', { inviteId: invite.id });
@@ -148,7 +135,7 @@ const MessagesPage = () => {
   };
 
   function anyModalOpen() {
-    return showAddModal || showRequestModal || showGroupModal || showInvitesModal;
+    return showRequestModal || showGroupModal || showInvitesModal;
   }
 
   return (
@@ -171,26 +158,6 @@ const MessagesPage = () => {
       <button onClick={() => {
         setShowRequestModal(false);
         setInviteUsername('');
-      }}>Cancel</button>
-      {requestError &&
-        <div className="request-error">{requestError}</div>
-      }
-    </div>
-  </div>
-)}
-
-{showAddModal && (
-  <div className="add-user-modal">
-    <div className="add-user-modal-content">
-      <input
-        type="text"
-        placeholder="Enter username"
-        onChange={(e) => setAddUser(e.target.value)}
-      />
-      <button onClick={handleAddRequest}>Add User</button>
-      <button onClick={() => {
-        setShowAddModal(false);
-        setAddUser('');
       }}>Cancel</button>
       {requestError &&
         <div className="request-error">{requestError}</div>
@@ -225,8 +192,6 @@ const MessagesPage = () => {
       />
       
       <div className="feature-buttons">
-
-        <button onClick={() => !anyModalOpen() && setShowAddModal(true)}>Add User</button>
         
         <button onClick={() => !anyModalOpen() && setShowGroupModal(true)}>Create Group</button>
 

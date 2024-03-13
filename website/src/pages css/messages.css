@@ -137,12 +137,30 @@
     cursor: pointer;
   }
   
-  .location-send button {
+  .chat-features {
     position: fixed;
-    right: 0;
-    top: 5px;
-    padding: 2px;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: flex-end; /* Use this to align items to the right */
+    align-items: center;
+    gap: 10px; /* Controls spacing between children */
   }
+
+  .chat-features button {
+    padding: 10px 20px; 
+    border: none; /* Removes the default border */
+    background-color: #ffffff; /* Primary button color */
+    color: rgb(14, 7, 7); /* Text color */
+    font-size: 16px; /* Adjust based on your design */
+    border-radius: 5px; /* Rounded corners for a modern look */
+    cursor: pointer; /* Indicates an interactive element */
+    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for interactions */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Adds a subtle shadow */
+    margin-right: 10px;
+  }
+
+
 
   .message-input button:hover {
     background-color: #0056b3;

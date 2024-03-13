@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import '../pages css/messages.css';
 import ChatInput from "./ChatInput";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -8,13 +9,19 @@ export default function Chat({ selectedGroup, user }) {
 
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
-
+    const [requestError, setRequestError] = useState('');
     const [messages, setMessages] = useState([]);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [addUser, setAddUser] = useState('');
 
     useEffect(() => {
         console.log('Getting messages');
         getMessages();
     }, [selectedGroup]);
+
+    const handleAddRequest = async (e) => {
+      e.preventDefault();
+    }
 
     async function getMessages() {
         if (selectedGroup) {
@@ -141,8 +148,30 @@ export default function Chat({ selectedGroup, user }) {
                     ))}
                 </div>
             </div>
-            <div className="location-send">
+
+          {showAddModal && (
+          <div className="add-user-modal">
+            <div className="add-user-modal-content">
+              <input
+                type="text"
+                placeholder="Enter username"
+                onChange={(e) => setAddUser(e.target.value)}
+              />
+              <button onClick={handleAddRequest}>Add User</button>
+              <button onClick={() => {
+                setShowAddModal(false);
+                setAddUser('');
+              }}>Cancel</button>
+              {requestError &&
+                <div className="request-error">{requestError}</div>
+              }
+            </div>
+          </div>
+        )}
+
+            <div className="chat-features">
                 <button onClick={getLocation}>Send my location</button>
+                <button onClick={() => setShowAddModal(true)}>Add User</button>
             </div>
 
             {selectedGroup && <ChatInput sendMessage={sendMessage} />}
