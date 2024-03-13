@@ -44,7 +44,7 @@ const MessagesPage = () => {
       getSelfInfo();
     }
   }, []);
-  
+
   async function getSelfInfo() {
     const selfInfo = await axios.get(getSelfInfoRoute);
     if (selfInfo.data.status) {
@@ -108,7 +108,7 @@ const MessagesPage = () => {
     try {
       setRequestError('');
       // Send a request to the server to initiate a conversation with the specified username
-      const response = await axios.post(sendFriendInviteRoute, { 
+      const response = await axios.post(sendFriendInviteRoute, {
         inviteeUsername: inviteUsername
       });
       console.log(response.data); // Log the response from the server
@@ -134,7 +134,7 @@ const MessagesPage = () => {
       console.error('Error accepting invite:', error);
     }
   };
-  
+
   const handleDeclineInvite = async (invite) => {
     try {
       const response = await axios.post('/api/invites/decline', { inviteId: invite.id });
@@ -194,16 +194,16 @@ const MessagesPage = () => {
 
 
 <CreateGroupModal
-          showModal={showGroupModal} 
+          showModal={showGroupModal}
           setShowModal={setShowGroupModal}
           setGroups={setGroups}
         />
-      
+
       <div className="feature-buttons">
-        <Link to="/">
+        {/* <Link to="/">
           <button className="home-button">Home</button>
-        </Link>
-        
+        </Link> */}
+
         <button onClick={() => setShowGroupModal(true)}>Create Group</button>
 
         {/* {!showRequestForm && (
@@ -213,7 +213,7 @@ const MessagesPage = () => {
         <button onClick={() => setShowRequestModal(true)}>Send Request</button>
 
         <button onClick={() => setShowInvitesModal(true)}>Invites</button>
-        
+
       </div>
     </div>
   );
