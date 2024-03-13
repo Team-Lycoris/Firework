@@ -47,15 +47,17 @@ export default function Chat({ selectedGroup, user }) {
 
         }
     }
-
+    //temp event assignment for testing purposes
     const sendMessage = async (message) => {
         if (message !== '' && selectedGroup) {
             const updatedMessages = [...messages, {
                 content: message,
                 author: user.id,
                 username: user.username,
-                type: 'text'
-            }];
+                type: 'text',
+                event: latitude !== null && longitude != null ? 0 : null
+              }
+            ];
             setMessages(updatedMessages);
 
             console.log(selectedGroup);
@@ -139,10 +141,12 @@ export default function Chat({ selectedGroup, user }) {
                             <p className="author">{message.username}</p>
                             <p className="message-content">
                             {
-                                message.type === 'text' ? 
-                                message.content :
+                                message.event === null ? 
+                                message.content : 
+                                <div> <p>{message.content}</p>
                                 <Link to={"/map"}>My Location</Link>
-                            }
+                                </div>
+                                }
                             </p>
                         </div>
                     ))}
