@@ -64,29 +64,25 @@ const MessagesPage = () => {
     if (user) {
       const res = await axios.get(getGroupsRoute);
       if (res.data.status) {
-        setGroups(res.data.groups);
         console.log(res.data.groups);
+        const grps = res.data.groups.map((grp) => {
+          if (grp.isDm) {
+            const names = grp.name.split(' ');
+            if (names.length > 1) {
+              grp.name = names[0] === user.username ?
+                names[1] : names[0];
+            }
+          }
+          return grp;
+        });
+
+        setGroups(grps);
+        console.log(grps);
       }
       else {
         // Some kind of error occurred
         console.error(res.data.msg)
       }
-    }
-  }
-
-  const createGroup = async () => {
-    const res = await axios.post(createGroupRoute, {
-      groupName: 'test',
-      userIds: [
-        1,
-        2
-      ]
-    });
-    if (res.data.status) {
-      const updatedGroups = [...groups, res.data.group];
-      setGroups(updatedGroups);
-    } else {
-      console.error(res.data.msg);
     }
   }
 

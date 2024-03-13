@@ -18,6 +18,13 @@ export default class Message extends Model {
 					key: "id"
 				}
 			},
+			username: {
+				type: DataTypes.STRING,
+				references: {
+					model: User,
+					key: "username"
+				}
+			},
 			content: {
 				type: DataTypes.STRING(2000), // max length 2000
 				allowNull: false

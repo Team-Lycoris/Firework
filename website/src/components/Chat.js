@@ -120,23 +120,27 @@ export default function Chat({ selectedGroup, user }) {
 
     return (
         <div className="chat-display">
-            {messages.map((message, index) => (
-                <div key={index}>
-                    { <p className="author">{message.username}</p>}
-                    {
-                        message.type === 'text' ?
-                        <p className="message" >{message.content}</p> :
-                        <Link to={"/map"}>My Location</Link>
-                    }
+            <div className="message-list-wrapper">
+                <div className="message-list">
+                    {messages.map((message, index) => (
+                        <div className={"message-container " + (message.username === user.username ? "self" : "other")} key={index}>
+                            <p className="author">{message.username}</p>
+                            <p className="message-content">
+                            {
+                                message.type === 'text' ? 
+                                message.content :
+                                <Link to={"/map"}>My Location</Link>
+                            }
+                            </p>
+                        </div>
+                    ))}
                 </div>
-            ))}
+            </div>
             <div className="location-send">
                 <button onClick={getLocation}>Send my location</button>
             </div>
 
             {selectedGroup && <ChatInput sendMessage={sendMessage} />}
-
-
         </div>
     );
 }

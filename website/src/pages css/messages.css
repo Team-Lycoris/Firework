@@ -33,26 +33,68 @@
 }
 
   .chat-display {
-    flex: 3;
+    flex: 1;
     display: flex;
     flex-direction: column;
+    
+  }
+
+  .message-list-wrapper {
+    flex: 3;
+    overflow:auto;
+    display:flex;
+    flex-direction:column-reverse;
+  }
+  .message-list {
     padding: 10px;
+
+    overflow:auto;
+    display:flex;
+    flex-direction:column;
+    
+    /* display: flex;
+    flex-direction: column-reverse;
+    overflow: auto; */
   }
   
   .author {
     font-size: 13px;
   }
 
-  .message {
+  .message-container {
+    min-width: 20%;
+    max-width: 70%
+  }
+
+  .message-container.other {
+    align-self: flex-start;
+  }
+
+  .message-container.self {
+    text-align: right;
+    align-self: flex-end;
+  }
+
+  .message-content {
     margin-bottom:10px;
     padding: 10px;
-    background-color: #87bff9;
     border-radius: 10px;
+    text-wrap: wrap;
+    word-break: break-all;
+  }
+  
+  .self .message-content {
+    background-color: #87bff9;
+  }
+
+  .other .message-content {
+    background-color: #d3d3d3;
   }
   
   .message-input {
     margin-top: auto;
     display: flex;
+    justify-self: flex-end;
   }
   
   .message-input input {
