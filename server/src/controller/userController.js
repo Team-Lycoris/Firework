@@ -1,6 +1,7 @@
 import FriendInvite from "../database/friendInvite.js";
 import Group from "../database/group.js";
 import User from "../database/user.js";
+import Event from "../database/event.js";
 
 export async function test(req, res, next) {
     try {

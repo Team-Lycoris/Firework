@@ -5,9 +5,9 @@ import { Link } from "react-router-dom";
 import { sendMessageRoute, getMessagesRoute } from "../utils/apiRoutes";
 
 export default function Chat({ selectedGroup, user }) {
- 
+
     const [latitude, setLatitude] = useState(null);
-    const [longitude, setLongitude] = useState([]);
+    const [longitude, setLongitude] = useState(null);
 
     const [messages, setMessages] = useState([]);
 
@@ -15,7 +15,7 @@ export default function Chat({ selectedGroup, user }) {
         console.log('Getting messages');
         getMessages();
     }, [selectedGroup]);
-    
+
     async function getMessages() {
         if (selectedGroup) {
             const res = await axios.get(getMessagesRoute + '/' + selectedGroup.id);
@@ -37,7 +37,7 @@ export default function Chat({ selectedGroup, user }) {
                 // An error occurred
                 console.error(res.data.msg);
             }
-            
+
         }
     }
 
@@ -55,11 +55,15 @@ export default function Chat({ selectedGroup, user }) {
             if (latitude !== null && longitude !== null)
             {
               const event = {
-              author: user.id,
-              longitude: longitude,
-              latitude: latitude,
-            }
-            // For testing
+                author: user.id,
+                longitude: longitude,
+                latitude: latitude,
+              }
+
+              setLatitude(null);
+              setLongitude(null);
+
+              // For testing
               const res = await axios.post(sendMessageRoute + '/' + selectedGroup.id, {
                 message: message,
                 event: event
@@ -96,8 +100,8 @@ export default function Chat({ selectedGroup, user }) {
             if (navigator.geolocation){
               navigator.geolocation.getCurrentPosition(
                 (position) => {
-                  setLatitude(position.latitude);
-                  setLongitude(position.longitude);
+                  setLatitude(position.coords.latitude);
+                  setLongitude(position.coords.longitude);
                   /*const embeddedMessage = { content: "My location!", type: "location", latitude, longitude };
                   const updateConversation = [...messages, embeddedMessage];
                   setMessages(updateConversation);*/
@@ -112,7 +116,7 @@ export default function Chat({ selectedGroup, user }) {
     }
     }
   }
- 
+
 
     return (
         <div className="chat-display">
@@ -120,19 +124,19 @@ export default function Chat({ selectedGroup, user }) {
                 <div key={index}>
                     { <p className="author">{message.username}</p>}
                     {
-                        message.type === 'text' ? 
+                        message.type === 'text' ?
                         <p className="message" >{message.content}</p> :
                         <Link to={"/map"}>My Location</Link>
                     }
                 </div>
             ))}
             <div className="location-send">
-                <button onClick={getLocation}>Send my location</button> 
+                <button onClick={getLocation}>Send my location</button>
             </div>
-            
+
             {selectedGroup && <ChatInput sendMessage={sendMessage} />}
 
-            
+
         </div>
     );
 }
