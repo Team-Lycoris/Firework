@@ -3,7 +3,8 @@ import { useState } from 'react';
 export default function ChatInput({ sendMessage }) {
     const [messageInput, setMessageInput] = useState('');
 
-    function sendInput() {
+    function sendInput(event) {
+        event.preventDefault();
         if (messageInput.length !== '') {
             sendMessage(messageInput)
             setMessageInput('');
@@ -11,14 +12,14 @@ export default function ChatInput({ sendMessage }) {
     }
 
     return (
-        <div className="message-input">
+        <form className="message-input">
           <input 
             type="text" 
             placeholder="Type a message..." 
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
           />
-          <button onClick={sendInput}>Send</button>
-        </div>
+          <button type="submit" onClick={sendInput}>Send</button>
+        </form>
     );
 }
