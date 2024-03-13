@@ -23,6 +23,13 @@ export default class FriendInvite extends Model {
 					model: User,
 					key: "id"
 				}
+			},
+			// hack to just get friend requests working nicely on the frontend
+			inviterName: {
+				type: DataTypes.STRING
+			},
+			inviteeName: {
+				type: DataTypes.STRING
 			}
 		}, {
 			sequelize: sequelize,
