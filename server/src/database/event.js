@@ -15,7 +15,7 @@ export default class Event extends Model {
 					key: "id"
 				}
 			},
-			name: {
+			/*name: {
 				type: DataTypes.STRING,
 				allowNull: false
 			},
@@ -26,11 +26,17 @@ export default class Event extends Model {
 			endTime: {
 				type: DataTypes.BIGINT,
 				allowNull: false
+			},*/
+			latitude: {
+				type: DataTypes.DOUBLE,
+				allowNull: true
+
 			},
-			location: {
-				type: DataTypes.STRING,
+			longitude: {
+				type: DataTypes.DOUBLE,
 				allowNull: false
 			}
+			
 		}, {
 			sequelize: sequelize,
 			modelName: "Event"
