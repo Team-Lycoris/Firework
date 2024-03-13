@@ -14,3 +14,4 @@ export const sendMessageRoute = host + '/api/user/sendMessage';
 export const getMessagesRoute = host + '/api/user/getMessages';
 export const getIncomingFriendInvitesRoute = host + '/api/user/getIncomingFriendInvites';
 export const getOutgoingFriendInvitesRoute = host + '/api/user/getOutgoingFriendInvites';
+export const addUserToGroupRoute = host + '/api/user/addUserToGroup';

@@ -85,11 +85,11 @@ export async function addUserToGroup(req, res, next) {
         if (group === null) {
             return res.json({status: false, msg: "Group does not exist"});
         }
-        const inviter = await Group.findOne({ where: { id: req.userId }});
+        const inviter = await User.findOne({ where: { id: req.userId }});
         if (inviter === null) {
             return res.json({status: false, msg: "User does not exist"});
         }
-        const invitee = await Group.findOne({ where: { id: req.body.inviteeId }});
+        const invitee = await User.findOne({ where: { username: req.body.inviteeUsername }});
         if (invitee === null) {
             return res.json({status: false, msg: "User does not exist"});
         }

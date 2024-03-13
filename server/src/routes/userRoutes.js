@@ -1,7 +1,7 @@
 import {Router} from "express";
 import { test, getSelfInfo, createDM, getGroups, createGroup,
     getMessages, sendMessage, sendFriendInvite, acceptFriendInvite,
-    getIncomingFriendInvites, getOutgoingFriendInvites, declineFriendInvite } from '../controller/userController.js'
+    getIncomingFriendInvites, getOutgoingFriendInvites, declineFriendInvite, addUserToGroup } from '../controller/userController.js'
 
 const router = Router();
 
@@ -16,5 +16,6 @@ router.post('/declineFriendInvite/', declineFriendInvite);
 router.post('/sendFriendInvite/', sendFriendInvite);
 router.get('/sendFriendInvite/', getIncomingFriendInvites);
 router.get('/getOutgoingFriendInvites/', getOutgoingFriendInvites);
+router.post('/addUserToGroup/', addUserToGroup);
 
 export default router;

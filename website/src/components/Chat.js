@@ -3,7 +3,7 @@ import '../pages css/messages.css';
 import ChatInput from "./ChatInput";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { sendMessageRoute, getMessagesRoute } from "../utils/apiRoutes";
+import { sendMessageRoute, getMessagesRoute, addUserToGroupRoute } from "../utils/apiRoutes";
 
 export default function Chat({ selectedGroup, user }) {
 
@@ -19,8 +19,13 @@ export default function Chat({ selectedGroup, user }) {
         getMessages();
     }, [selectedGroup]);
 
-    const handleAddRequest = async (e) => {
-      e.preventDefault();
+    const handleAddRequest = async (username) => {
+      const res = await axios.post(addUserToGroupRoute, {
+        groupId: selectedGroup.id,
+        inviteeUsername: username
+      });
+
+      console.log(res.data.status ? username + "added to group " + selectedGroup.id : res.data.msg);
     }
 
     async function getMessages() {
@@ -132,7 +137,7 @@ export default function Chat({ selectedGroup, user }) {
             <div className="chat-header">
                 <h2 className="group-name">{selectedGroup.name}</h2>
             </div>
-            
+
 
             <div className="message-list-wrapper">
                 <div className="message-list">
@@ -141,8 +146,8 @@ export default function Chat({ selectedGroup, user }) {
                             <p className="author">{message.username}</p>
                             <p className="message-content">
                             {
-                                message.event === null ? 
-                                message.content : 
+                                message.event === null ?
+                                message.content :
                                 <div> <p>{message.content}</p>
                                 <Link to={"/map"}>My Location</Link>
                                 </div>
@@ -161,7 +166,7 @@ export default function Chat({ selectedGroup, user }) {
                 placeholder="Enter username"
                 onChange={(e) => setAddUser(e.target.value)}
               />
-              <button onClick={handleAddRequest}>Add User</button>
+              <button onClick={() => handleAddRequest(addUser)}>Add User</button>
               <button onClick={() => {
                 setShowAddModal(false);
                 setAddUser('');
