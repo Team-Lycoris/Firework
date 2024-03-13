@@ -137,3 +137,30 @@
   border: 1px solid #ccc; /* Match border styling as buttons, if needed */
   border-radius: 5px; /* Rounded corners to match buttons */
 }
+
+.invites-modal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.invites-modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.invites-modal-content input[type="text"] {
+  height: 40px; /* Adjust to match button height */
+  padding: 0 10px; /* Adjust padding to match button padding, if necessary */
+  margin: 0 10px 10px 0; /* Adjust margins for spacing */
+  border: 1px solid #ccc; /* Match border styling as buttons, if needed */
+  border-radius: 5px; /* Rounded corners to match buttons */
+}

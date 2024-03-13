@@ -15,10 +15,16 @@ const MessagesPage = () => {
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [user, setUser] = useState(null);
   const [showRequestModal, setShowRequestModal] = useState(false);
+  const [showInvitesModal, setShowInvitesModal] = useState(false);
+  const [invites, setInvites] = useState(['user1', 'user2']);
 
   const handleRequestButtonClick = () => {
     setShowRequestForm(!showRequestForm);
   };
+
+  const handleInviteButtonClick = () => {
+    setShowInvitesModal(!showInvitesModal);
+  }
 
 //  useEffect(() => {
 //     const token = localStorage.getItem('user-token');
@@ -35,6 +41,19 @@ const MessagesPage = () => {
 //     }
 //   }, []);
   
+// useEffect(() => {
+//   const fetchInvites = async () => {
+//     try {
+//       const response = await axios.get('/api/invites');
+//       setInvites(response.data.invites); // Assuming the response contains an 'invites' array
+//     } catch (error) {
+//       console.error('Error fetching invites:', error);
+//     }
+//   };
+
+//   fetchInvites();
+// }, ['user1', 'user2', 'user3']); 
+
   async function getSelfInfo() {
     const selfInfo = await axios.get(getSelfInfoRoute);
     if (selfInfo.data.status) {
@@ -105,6 +124,24 @@ const MessagesPage = () => {
     }
   };
 
+  const handleAcceptInvite = async (invite) => {
+    try {
+      const response = await axios.post('/api/invites/accept', { inviteId: invite.id });
+      console.log(response.data); // Log the response from the server
+    } catch (error) {
+      console.error('Error accepting invite:', error);
+    }
+  };
+  
+  const handleDeclineInvite = async (invite) => {
+    try {
+      const response = await axios.post('/api/invites/decline', { inviteId: invite.id });
+      console.log(response.data); // Log the response from the server
+    } catch (error) {
+      console.error('Error declining invite:', error);
+    }
+  };
+
   return (
     <div className="messaging-container">
 
@@ -129,6 +166,27 @@ const MessagesPage = () => {
   </div>
 )}
 
+      {showInvitesModal && (
+        <div className="invites-modal">
+          <div className="invites-modal-content">
+
+              {/* <button onClick={() => {
+              setShowInvitesModal(false); // Hide modal after accepting or declining invite
+            }}>Invites</button> */}
+            <h2>Invites</h2>
+            <ul>
+              {invites.map((invites, index) => (
+                <li key={index}>
+                  <button onClick={() => handleAcceptInvite(invites)}>Accept</button>
+                  <button onClick={() => handleDeclineInvite(invites)}>Decline</button>
+                </li>
+              ))}
+            </ul>
+            <button onClick={() => setShowInvitesModal(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
+
       
       <div className="feature-buttons">
         <Link to="/">
@@ -137,27 +195,9 @@ const MessagesPage = () => {
         
         <button onClick={createGroup}>Create group</button>
 
-        {/* {!showRequestForm && (
-        <button onClick={handleRequestButtonClick}>Request Conversation</button>
-        )} */}
-
         <button onClick={() => setShowRequestModal(true)}>Send Request</button>
 
-        <button className='see-invites'>Invites</button>
-
-
-      {/* {showRequestForm && (
-       <div className="conversation-request-form">
-          <form onSubmit={handleConversationRequest}>
-           <input
-             type="text"
-             placeholder="Enter username"
-             name="username"
-           />
-            <button type="submit">Request Conversation</button>
-          </form>
-        </div>
-      )} */}
+        <button onClick={() => setShowInvitesModal(true)}>Invites</button>
         
       </div>
     </div>
