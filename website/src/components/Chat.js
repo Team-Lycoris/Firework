@@ -39,6 +39,7 @@ export default function Chat({ selectedGroup, user }) {
                         author: msg.author,
                         content: msg.content,
                         username: msg.username,
+                        event: msg.event,
                         type: 'text'
                     }
                     return data;
