@@ -50,6 +50,24 @@ const MessagesPage = () => {
   }
 
   useEffect(() => {
+    if(user) {
+      const fetchInvites = async () => {
+        try {
+          const response = await axios.get('/api/user/getIncomingFriendInvites');
+          if (response.data.status) {
+            setInvites(response.data.invites);
+            console.log(response.data.invites);
+          } else {
+            console.error(response.data.msg);
+          }
+        } catch (error) {
+          console.error('Failed to fetch invites');
+        }
+      }
+    }
+  }, [user]);
+
+  useEffect(() => {
     getGroups(user);
   }, [user])
 
@@ -118,7 +136,7 @@ const MessagesPage = () => {
 
   const handleAcceptInvite = async (invite) => {
     try {
-      const response = await axios.post('/api/invites/accept', { inviteId: invite.id });
+      const response = await axios.post('/api/user/acceptFriendInvite', { inviteId: invite.id });
       console.log(response.data); // Log the response from the server
     } catch (error) {
       console.error('Error accepting invite:', error);
@@ -127,7 +145,7 @@ const MessagesPage = () => {
   
   const handleDeclineInvite = async (invite) => {
     try {
-      const response = await axios.post('/api/invites/decline', { inviteId: invite.id });
+      const response = await axios.post('/api/user/declineFriendInvite', { inviteId: invite.id });
       console.log(response.data); // Log the response from the server
     } catch (error) {
       console.error('Error declining invite:', error);
