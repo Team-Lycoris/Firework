@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import '../pages css/messages.css';
 import {Link, useNavigate} from 'react-router-dom';
-import { sendMessageRoute, getMessagesRoute, getGroupsRoute, createGroupRoute, createDMRoute, getSelfInfoRoute } from '../utils/apiRoutes';
+import { sendMessageRoute, getMessagesRoute, getGroupsRoute, createGroupRoute, createDMRoute, getSelfInfoRoute, sendFriendInviteRoute, acceptFriendInviteRoute } from '../utils/apiRoutes';
 import axios from 'axios';
 import Chat from '../components/Chat';
 import GroupList from '../components/GroupList';
@@ -15,6 +15,8 @@ const MessagesPage = () => {
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [user, setUser] = useState(null);
   const [showRequestModal, setShowRequestModal] = useState(false);
+  const [requestUsername, setRequestUsername] = useState('');
+  const [requestError, setRequestError] = useState('');
 
   const handleRequestButtonClick = () => {
     setShowRequestForm(!showRequestForm);
@@ -95,12 +97,23 @@ const MessagesPage = () => {
 
   const handleConversationRequest = async (e) => {
     e.preventDefault();
-    const username = e.target.elements.username.value;
     try {
+      setRequestError('');
       // Send a request to the server to initiate a conversation with the specified username
-      const response = await axios.post('/api/conversations/request', { username });
+      const response = await axios.post(sendFriendInviteRoute, { 
+        inviteeUsername: requestUsername
+      });
       console.log(response.data); // Log the response from the server
+
+      if (response.data.status) {
+        setShowRequestModal(false); // Hide modal after sending request
+        setRequestUsername('');
+      } else {
+        setRequestError(response.data.msg);
+        console.error(response.data.msg);
+      }
     } catch (error) {
+      setRequestError('Unknown error');
       console.error('Error requesting conversation:', error);
     }
   };
@@ -118,13 +131,17 @@ const MessagesPage = () => {
       <input
         type="text"
         placeholder="Enter username"
+        onChange={(e) => setRequestUsername(e.target.value)}
         // Setup onChange to update a state variable with the input's value
       />
+      <button onClick={handleConversationRequest}>Send Request</button>
       <button onClick={() => {
-        // Implement sending request functionality here
-        setShowRequestModal(false); // Hide modal after sending request
-      }}>Send Request</button>
-      <button onClick={() => setShowRequestModal(false)}>Cancel</button>
+        setShowRequestModal(false);
+        setRequestUsername('');
+      }}>Cancel</button>
+      {requestError &&
+        <div className="request-error">{requestError}</div>
+      }
     </div>
   </div>
 )}
