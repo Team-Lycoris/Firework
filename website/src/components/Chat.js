@@ -120,6 +120,11 @@ export default function Chat({ selectedGroup, user }) {
 
     return (
         <div className="chat-display">
+            <div className="chat-header">
+                <h2 className="group-name">{selectedGroup.name}</h2>
+            </div>
+            
+
             <div className="message-list-wrapper">
                 <div className="message-list">
                     {messages.map((message, index) => (
