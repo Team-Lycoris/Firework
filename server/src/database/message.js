@@ -2,9 +2,6 @@ import { Model, DataTypes } from "sequelize";
 import Event from "./event.js"
 import User from "./user.js"
 
-/**
- * Represents a message in a conversation.
- */
 export default class Message extends Model {
 	static initialize(sequelize) {
 		Message.init({
@@ -19,14 +16,6 @@ export default class Message extends Model {
 				references: {
 					model: User,
 					key: "id"
-				}
-			},
-			username: {
-				type: DataTypes.STRING(100),
-				allowNull: false,
-				references: {
-					model: User,
-					key: "username"
 				}
 			},
 			content: {
