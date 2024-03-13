@@ -1,6 +1,9 @@
-import { Model, Op, DataTypes } from "sequelize";
+import { Model, DataTypes } from "sequelize";
 import User from "./user.js";
 
+/**
+ * Stores information about when a user shares a location.
+ */
 export default class Event extends Model {
 	static initialize(sequelize) {
 		Event.init({

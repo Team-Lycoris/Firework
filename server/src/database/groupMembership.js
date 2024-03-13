@@ -2,6 +2,9 @@ import { Model, DataTypes } from "sequelize";
 import User from "./user.js"
 import Group from "./group.js"
 
+/**
+ * Model used to associate users with groups.
+ */
 export default class GroupMembership extends Model {
 	static initialize(sequelize) {
 		GroupMembership.init({

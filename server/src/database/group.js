@@ -1,9 +1,9 @@
 import { Model, Op, DataTypes } from "sequelize";
-import GroupMembership from "./groupMembership.js";
-import MessageVisibility from "./messageVisibility.js";
-import Message from "./message.js";
-import User from "./user.js";
 
+/**
+ * Represents a conversation between users.
+ * Can be a DM or a proper group of more than 2 users.
+ */
 export default class Group extends Model {
 	static initialize(sequelize) {
 		Group.init({
