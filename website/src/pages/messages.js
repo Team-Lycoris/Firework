@@ -20,20 +20,20 @@ const MessagesPage = () => {
     setShowRequestForm(!showRequestForm);
   };
 
-//  useEffect(() => {
-//     const token = localStorage.getItem('user-token');
+  useEffect(() => {
+    const token = localStorage.getItem('user-token');
 
-//     // Check if the user has a token
-//     if (token === null) {
-//       navigate('/login');
-//     } else {
-//       // Add token to header for requests
-//       axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+    // Check if the user has a token
+    if (token === null) {
+      navigate('/login');
+        } else {
+      // Add token to header for requests
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 
-//       // Request content from server
-//       getSelfInfo();
-//     }
-//   }, []);
+      // Request content from server
+      getSelfInfo();
+    }
+  }, []);
   
   async function getSelfInfo() {
     const selfInfo = await axios.get(getSelfInfoRoute);

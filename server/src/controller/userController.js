@@ -10,6 +10,31 @@ export async function test(req, res, next) {
     }
 }
 
+export async function addUserToGroup(req, res, next) {
+    try {
+        console.log(req.body);
+        const group = await Group.findOne({ where: { id: req.body.groupId }});
+        if (group === null) {
+            return res.json({status: false, msg: "Group does not exist"});
+        }
+        const inviter = await Group.findOne({ where: { id: req.userId }});
+        if (inviter === null) {
+            return res.json({status: false, msg: "User does not exist"});
+        }
+        const invitee = await Group.findOne({ where: { id: req.body.inviteeId }});
+        if (invitee === null) {
+            return res.json({status: false, msg: "User does not exist"});
+        }
+        if (await group.hasUser(inviter)) {
+            group.addUser(invitee);
+        }
+
+        return res.json({status: true, group: group.toJSON()});
+    } catch(ex) {
+        next(ex);
+    }
+}
+
 export async function getSelfInfo(req, res, next) {
     try {
         const user = await User.findOne({ where: { id: req.userId }});
