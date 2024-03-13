@@ -22,6 +22,7 @@ export default function Chat({ selectedGroup, user }) {
                         id: msg.id,
                         author: msg.author,
                         content: msg.content,
+                        username: msg.username,
                         type: 'text'
                     }
                     return data;
@@ -38,7 +39,12 @@ export default function Chat({ selectedGroup, user }) {
 
     const sendMessage = async (message) => {
         if (message !== '' && selectedGroup) {
-            const updatedMessages = [...messages, {content: message, type: 'text'}];
+            const updatedMessages = [...messages, {
+                content: message,
+                author: user.id,
+                username: user.username,
+                type: 'text'
+            }];
             setMessages(updatedMessages);
 
             console.log(selectedGroup);
@@ -132,7 +138,7 @@ export default function Chat({ selectedGroup, user }) {
         <div className="chat-display">
             {messages.map((message, index) => (
                 <div key={index}>
-                    { <p className="author">{messages.author}authorname</p>}
+                    { <p className="author">{message.username}</p>}
                     {
                         message.type === 'text' ? 
                         <p className="message" >{message.content}</p> :
