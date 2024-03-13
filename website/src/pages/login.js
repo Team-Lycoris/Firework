@@ -130,7 +130,7 @@ const Authenticate = () => {
           />
         </div>
         <button onClick={handleLogin}>Log In</button>
-        <buttonText onClick={handleRegister}>Sign Up</buttonText>
+        <div className="register-button" onClick={handleRegister}>Sign Up</div>
         {error &&
           <div className="error">{error}</div>
         }
