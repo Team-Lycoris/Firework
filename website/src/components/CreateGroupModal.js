@@ -56,8 +56,8 @@ export default function CreateGroupModal({showModal, setShowModal, setGroups}) {
     return (
         <>
             {showModal && (
-                <div className="request-modal">
-                    <div className='request-model-content'>
+                <div className="group-modal">
+                    <div className='group-model-content'>
                         <input
                             type="text"
                             placeholder="Enter group name"

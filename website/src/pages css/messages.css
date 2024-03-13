@@ -82,8 +82,9 @@
     background-color: #0056b3;
   }
 
-    button, .button {
-    padding: 10px 20px; /* Uniform padding */
+
+  button, .button {
+    padding: 10px 20px; 
     border: none; /* Removes the default border */
     background-color: #ffffff; /* Primary button color */
     color: rgb(14, 7, 7); /* Text color */
@@ -94,7 +95,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Adds a subtle shadow */
     margin-right: 10px;
   }
-  
+
 
   .feature-buttons {
     position: fixed;
@@ -143,10 +144,36 @@
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  /* Add more styling as needed */
 }
 
 .request-modal-content input[type="text"] {
+  height: 40px; /* Adjust to match button height */
+  padding: 0 10px; /* Adjust padding to match button padding, if necessary */
+  margin: 0 10px 10px 0; /* Adjust margins for spacing */
+  border: 1px solid #ccc; /* Match border styling as buttons, if needed */
+  border-radius: 5px; /* Rounded corners to match buttons */
+}
+
+.group-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.group-modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.group-modal-content input[type="text"] {
   height: 40px; /* Adjust to match button height */
   padding: 0 10px; /* Adjust padding to match button padding, if necessary */
   margin: 0 10px 10px 0; /* Adjust margins for spacing */
