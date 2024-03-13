@@ -4,7 +4,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { sendMessageRoute, getMessagesRoute } from "../utils/apiRoutes";
 
-export default function Chat({ selectedGroup }) {
+export default function Chat({ selectedGroup, user }) {
     const [messages, setMessages] = useState([]);
 
     useEffect(() => {
@@ -131,10 +131,11 @@ export default function Chat({ selectedGroup }) {
     return (
         <div className="chat-display">
             {messages.map((message, index) => (
-                <div className="message" key={index}>
+                <div key={index}>
+                    { <p className="author">{messages.author}authorname</p>}
                     {
                         message.type === 'text' ? 
-                        <p>{message.content}</p> :
+                        <p className="message" >{message.content}</p> :
                         <Link to={`/map?lat=${message.latitude}&lng=${message.longitude}`}>My Location</Link>
                     }
                 </div>
