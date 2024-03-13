@@ -16,25 +16,34 @@ const MessagesPage = () => {
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [user, setUser] = useState(null);
   const [showRequestModal, setShowRequestModal] = useState(false);
+  const [requestError, setRequestError] = useState('');
+  const [showGroupModal, setShowGroupModal] = useState(false);
+  const [inviteUsername, setInviteUsername] = useState('');
+  const [showInvitesModal, setShowInvitesModal] = useState(false);
+  const [invites, setInvites] = useState(['user1', 'user2']);
 
   const handleRequestButtonClick = () => {
     setShowRequestForm(!showRequestForm);
   };
 
-//  useEffect(() => {
-//     const token = localStorage.getItem('user-token');
+  const handleInviteButtonClick = () => {
+    setShowInvitesModal(!showInvitesModal);
+  }
 
-    // Check if the user has a token
+ useEffect(() => {
+    const token = localStorage.getItem('user-token');
+
+    //Check if the user has a token
     if (token === null) {
       navigate('/login');
         } else {
       // Add token to header for requests
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 
-//       // Request content from server
-//       getSelfInfo();
-//     }
-//   }, []);
+      // Request content from server
+      getSelfInfo();
+    }
+  }, []);
   
   async function getSelfInfo() {
     const selfInfo = await axios.get(getSelfInfoRoute);
@@ -94,7 +103,7 @@ const MessagesPage = () => {
   };
 
 
-  const handleConversationRequest = async (e) => {
+ const handleConversationRequest = async (e) => {
     e.preventDefault();
     try {
       setRequestError('');
@@ -162,13 +171,40 @@ const MessagesPage = () => {
   </div>
 )}
 
+      {showInvitesModal && (
+        <div className="invites-modal">
+          <div className="invites-modal-content">
+
+              {/* <button onClick={() => {
+              setShowInvitesModal(false); // Hide modal after accepting or declining invite
+            }}>Invites</button> */}
+            <h2>Invites</h2>
+            <ul>
+              {invites.map((invites, index) => (
+                <li key={index}>
+                  <button onClick={() => handleAcceptInvite(invites)}>Accept</button>
+                  <button onClick={() => handleDeclineInvite(invites)}>Decline</button>
+                </li>
+              ))}
+            </ul>
+            <button onClick={() => setShowInvitesModal(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+
+<CreateGroupModal
+          showModal={showGroupModal} 
+          setShowModal={setShowGroupModal}
+          setGroups={setGroups}
+        />
       
       <div className="feature-buttons">
         <Link to="/">
           <button className="home-button">Home</button>
         </Link>
         
-        <button onClick={createGroup}>Create group</button>
+        <button onClick={() => setShowGroupModal(true)}>Create Group</button>
 
         {/* {!showRequestForm && (
         <button onClick={handleRequestButtonClick}>Request Conversation</button>
