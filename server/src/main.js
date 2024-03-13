@@ -38,8 +38,8 @@ async function test() {
 	await group.addUser(bobby);
 	await bobby.sendMessage("testtsetset", group.id);
 
-	const event = await bobby.createEvent("gamer meetup", "1234 Gaming St.", -1, 123456);
-	bobby.sendMessage("guys gamer meetup", group.id, event.id);
+	//const event = await bobby.createEvent("gamer meetup", "1234 Gaming St.", -1, 123456);
+	//bobby.sendMessage("guys gamer meetup", group.id, event.id);
 
 	const richardJWT = await auth.issueJWT(richard.id);
 	// console.log(await auth.verifyJWT(richardJWT));
