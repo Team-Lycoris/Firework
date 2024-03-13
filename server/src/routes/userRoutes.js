@@ -14,7 +14,7 @@ router.post('/sendMessage/:groupId', sendMessage);
 router.post('/acceptFriendInvite/', acceptFriendInvite);
 router.post('/declineFriendInvite/', declineFriendInvite);
 router.post('/sendFriendInvite/', sendFriendInvite);
-router.get('/sendFriendInvite/', getIncomingFriendInvites);
+router.get('/getIncomingFriendInvites/', getIncomingFriendInvites);
 router.get('/getOutgoingFriendInvites/', getOutgoingFriendInvites);
 router.post('/addUserToGroup/', addUserToGroup);
 
