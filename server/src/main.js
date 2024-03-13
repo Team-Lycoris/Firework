@@ -1,11 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import { Server } from 'socket.io';
-import eventHandler from "./api/eventHandler.js";
-import loginHandler from './api/loginHandler.js';
+import eventHandler from "./sockets/eventHandler.js";
+import loginHandler from "./sockets/loginHandler.js";
+import userHandler from "./sockets/userHandler.js"
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
-import {authUser} from "./controller/middleware.js";
+import {authUser, socketAuth} from "./controller/middleware.js";
 
 import FireworkDatabase from "./database/fireworkDatabase.js"
 import User from "./database/user.js";
@@ -94,14 +95,26 @@ const server = app.listen(PORT, () => {
 	console.log('Server started on port', PORT);
 });
 
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+		origin: "http://localhost:3000",
+    	credentials: true,
+	}
+});
 
+const connectedSockets = new Map();
+
+io.use(socketAuth);
 io.on('connection', (socket) => {
 	console.log("Client connected");
+	connectedSockets.set(socket.userId, socket.id);
 
+	userHandler(io, socket, connectedSockets);
+	/*
 	socket.join('ch-1');
 	socket.data.active_channel = 1;
 
 	eventHandler(io, socket);
 	loginHandler(io, socket, db);
+	*/
 });

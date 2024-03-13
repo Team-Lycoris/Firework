@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import '../pages css/messages.css';
 import {Link, useNavigate} from 'react-router-dom';
 import { sendMessageRoute, getMessagesRoute, getGroupsRoute, createGroupRoute, createDMRoute, getSelfInfoRoute, sendFriendInviteRoute, acceptFriendInviteRoute } from '../utils/apiRoutes';
@@ -7,9 +7,13 @@ import Chat from '../components/Chat';
 import GroupList from '../components/GroupList';
 import ChatInput from '../components/ChatInput';
 import CreateGroupModal from '../components/CreateGroupModal';
+import { io } from 'socket.io-client';
+
+const HOST_URL = 'http://localhost:8080';
 
 const MessagesPage = () => {
   const navigate = useNavigate();
+  const socket = useRef();
   // State to keep track of the selected conversation
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [groups, setGroups] = useState([]);
@@ -32,6 +36,13 @@ const MessagesPage = () => {
         } else {
       // Add token to header for requests
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+
+      // Connect with web socket
+      socket.current = io(HOST_URL, {
+        auth: {
+          token: token
+        }
+      });
 
       // Request content from server
       getSelfInfo();
@@ -162,7 +173,7 @@ const MessagesPage = () => {
       <GroupList groups={groups} selectGroup={setSelectedGroup} />
 
       {selectedGroup && 
-        <Chat selectedGroup={selectedGroup} user={user}/>
+        <Chat selectedGroup={selectedGroup} user={user} socket={socket} />
       }
       {showRequestModal && (
   <div className="request-modal">

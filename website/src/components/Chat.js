@@ -5,19 +5,38 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { sendMessageRoute, getMessagesRoute, addUserToGroupRoute } from "../utils/apiRoutes";
 
-export default function Chat({ selectedGroup, user }) {
+export default function Chat({ selectedGroup, user, socket }) {
 
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
     const [requestError, setRequestError] = useState('');
     const [messages, setMessages] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false);
+    const [receivedMessage, setReceivedMessage] = useState('');
     const [addUser, setAddUser] = useState('');
 
     useEffect(() => {
         console.log('Getting messages');
         getMessages();
     }, [selectedGroup]);
+
+    useEffect(() => {
+        if (socket.current) {
+            socket.current.on('receive-message', (msg) => {
+                setReceivedMessage(msg);
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        if (receivedMessage) {
+            setMessages((msgs) => [...msgs, receivedMessage]);
+        }
+    }, [receivedMessage])
+
+    function receiveMessage(message) {
+        setMessages((prev) => [...prev, message]);
+    }
 
     const handleAddRequest = async (username) => {
       const res = await axios.post(addUserToGroupRoute, {
@@ -56,57 +75,74 @@ export default function Chat({ selectedGroup, user }) {
     //temp event assignment for testing purposes
     const sendMessage = async (message) => {
         if (message !== '' && selectedGroup) {
+            // Update the message history
             const updatedMessages = [...messages, {
                 content: message,
                 author: user.id,
                 username: user.username,
-                type: 'text',
-                event: latitude !== null && longitude != null ? 0 : null
-              }
-            ];
+                type: 'text'
+            }];
             setMessages(updatedMessages);
 
             console.log(selectedGroup);
             if (latitude !== null && longitude !== null)
             {
-              const event = {
-                author: user.id,
-                longitude: longitude,
-                latitude: latitude,
-              }
+                const event = {
+                    author: user.id,
+                    longitude: longitude,
+                    latitude: latitude,
+                }
 
-              setLatitude(null);
-              setLongitude(null);
+                setLatitude(null);
+                setLongitude(null);
 
-              // For testing
-              const res = await axios.post(sendMessageRoute + '/' + selectedGroup.id, {
-                message: message,
-                event: event
-              });
+                // Send the message to the database
+                const res = await axios.post(sendMessageRoute + '/' + selectedGroup.id, {
+                    message: message,
+                    event: event
+                });
 
-              if (res.data.status) {
-                // The message was sent
-                console.log("Message sent:", message);
-              } else {
-                  // An error was returned by the server
-                  console.log(res.data.msg);
-              }
+                if (res.data.status) {
+                    // The message was sent
+                    console.log("Message sent:", res.data.message);
+
+                    // Send the message to other connected users
+                    const data = {
+                        message: res.data.message,
+                        event: event,
+                        groupId: selectedGroup.id
+                    }
+                    // Send the message to other users
+                    socket.current.emit('send-message', data);
+                } else {
+                    // An error was returned by the server
+                    console.log(res.data.msg);
+                }
             }
             else{
                 // For testing
-            const res = await axios.post(sendMessageRoute + '/' + selectedGroup.id, {
-              message: message,
-            });
+                const res = await axios.post(sendMessageRoute + '/' + selectedGroup.id, {
+                    message: message,
+                });
 
-          if (res.data.status) {
-            // The message was sent
-            console.log("Message sent:", message);
-          } else {
-              // An error was returned by the server
-              console.log(res.data.msg);
-          }
-              }
-          }
+                if (res.data.status) {
+                    // The message was sent
+                    console.log("Message sent:", message);
+
+                    // Send the message to other connected users
+                    const data = {
+                        message: res.data.message,
+                        event: null,
+                        groupId: selectedGroup.id
+                    }
+                    // Send the message to other users
+                    socket.current.emit('send-message', data);
+                } else {
+                    // An error was returned by the server
+                    console.log(res.data.msg);
+                }
+            }
+        }
     }
 //author lat long
 

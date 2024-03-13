@@ -201,17 +201,18 @@ export async function sendMessage(req, res, next) {
             return res.json({status: false, msg: "Group does not exist"});
         }
 
+        let message;
         if (req.body.event !== undefined)
         {
             const event = await Event.create(req.body.event);
-            sender.sendMessage(content, group.id, event.id);
+            message = await sender.sendMessage(content, group.id, event.id);
         }
         else
         {
-            sender.sendMessage(content, group.id);
+            message = await sender.sendMessage(content, group.id);
         }
 
-        return res.json({status: true});
+        return res.json({status: true, message: message});
     } catch(ex) {
         next(ex);
     }

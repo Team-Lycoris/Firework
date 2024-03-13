@@ -6,7 +6,7 @@ export async function authUser(req, res, next) {
 
         const decoded = await FireworkAuth.prototype.verifyJWT(token);
 
-        console.log(decoded);
+        console.log('API token:', decoded);
         
         req.userId = decoded.userId;
 
@@ -14,5 +14,22 @@ export async function authUser(req, res, next) {
     } catch(ex) {
         console.error(ex);
         return res.json({status: false, msg: "Authentication failed"});
+    }
+}
+
+export async function socketAuth(socket, next) {
+    try {
+        const token = socket.handshake.auth.token;
+
+        const decoded = await FireworkAuth.prototype.verifyJWT(token);
+
+        console.log('Socket token:', decoded);
+        
+        socket.userId = decoded.userId;
+
+        next();
+    } catch(ex) {
+        console.error(ex);
+        next(ex);
     }
 }
