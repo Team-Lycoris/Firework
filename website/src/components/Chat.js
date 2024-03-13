@@ -166,7 +166,11 @@ export default function Chat({ selectedGroup, user }) {
                 placeholder="Enter username"
                 onChange={(e) => setAddUser(e.target.value)}
               />
-              <button onClick={() => handleAddRequest(addUser)}>Add User</button>
+              <button onClick={() => {
+                handleAddRequest(addUser);
+                setShowAddModal(false);
+                setAddUser('');
+                }}>Add User</button>
               <button onClick={() => {
                 setShowAddModal(false);
                 setAddUser('');
