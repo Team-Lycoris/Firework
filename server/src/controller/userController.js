@@ -68,6 +68,16 @@ export async function acceptFriendInvite(req, res, next) {
     }
 }
 
+export async function declineFriendInvite(req, res, next) {
+    try {
+        const invite = await FriendInvite.findOne({ where: { invitee: req.userId, inviter: req.body.inviterId } });
+        await invite.destroy();
+        return res.json({status: true});
+    } catch(ex) {
+        next(ex);
+    }
+}
+
 export async function addUserToGroup(req, res, next) {
     try {
         console.log(req.body);
