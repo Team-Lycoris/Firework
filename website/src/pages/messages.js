@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import '../pages css/messages.css';
 import {Link, useNavigate} from 'react-router-dom';
-import { sendMessageRoute, getMessagesRoute, getGroupsRoute, createGroupRoute, createDMRoute, getSelfInfoRoute } from '../utils/apiRoutes';
+import { sendMessageRoute, getMessagesRoute, getGroupsRoute, createGroupRoute, createDMRoute, getSelfInfoRoute, sendFriendInviteRoute, acceptFriendInviteRoute } from '../utils/apiRoutes';
 import axios from 'axios';
 import Chat from '../components/Chat';
 import GroupList from '../components/GroupList';
 import ChatInput from '../components/ChatInput';
+import CreateGroupModal from '../components/CreateGroupModal';
 
 const MessagesPage = () => {
   const navigate = useNavigate();
@@ -15,45 +16,26 @@ const MessagesPage = () => {
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [user, setUser] = useState(null);
   const [showRequestModal, setShowRequestModal] = useState(false);
-  const [showInvitesModal, setShowInvitesModal] = useState(false);
-  const [invites, setInvites] = useState(['user1', 'user2']);
 
   const handleRequestButtonClick = () => {
     setShowRequestForm(!showRequestForm);
   };
 
-  const handleInviteButtonClick = () => {
-    setShowInvitesModal(!showInvitesModal);
-  }
-
 //  useEffect(() => {
 //     const token = localStorage.getItem('user-token');
 
-//     // Check if the user has a token
-//     if (token === null) {
-//       navigate('/login');
-//     } else {
-//       // Add token to header for requests
-//       axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+    // Check if the user has a token
+    if (token === null) {
+      navigate('/login');
+        } else {
+      // Add token to header for requests
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 
 //       // Request content from server
 //       getSelfInfo();
 //     }
 //   }, []);
   
-// useEffect(() => {
-//   const fetchInvites = async () => {
-//     try {
-//       const response = await axios.get('/api/invites');
-//       setInvites(response.data.invites); // Assuming the response contains an 'invites' array
-//     } catch (error) {
-//       console.error('Error fetching invites:', error);
-//     }
-//   };
-
-//   fetchInvites();
-// }, ['user1', 'user2', 'user3']); 
-
   async function getSelfInfo() {
     const selfInfo = await axios.get(getSelfInfoRoute);
     if (selfInfo.data.status) {
@@ -114,12 +96,23 @@ const MessagesPage = () => {
 
   const handleConversationRequest = async (e) => {
     e.preventDefault();
-    const username = e.target.elements.username.value;
     try {
+      setRequestError('');
       // Send a request to the server to initiate a conversation with the specified username
-      const response = await axios.post('/api/conversations/request', { username });
+      const response = await axios.post(sendFriendInviteRoute, { 
+        inviteeUsername: inviteUsername
+      });
       console.log(response.data); // Log the response from the server
+
+      if (response.data.status) {
+        setShowRequestModal(false); // Hide modal after sending request
+        setInviteUsername('');
+      } else {
+        setRequestError(response.data.msg);
+        console.error(response.data.msg);
+      }
     } catch (error) {
+      setRequestError('Unknown error');
       console.error('Error requesting conversation:', error);
     }
   };
@@ -147,7 +140,7 @@ const MessagesPage = () => {
 
       <GroupList groups={groups} selectGroup={setSelectedGroup} />
 
-      <Chat selectedGroup={selectedGroup}/>
+      <Chat selectedGroup={selectedGroup} user={user}/>
 
       {showRequestModal && (
   <div className="request-modal">
@@ -155,37 +148,19 @@ const MessagesPage = () => {
       <input
         type="text"
         placeholder="Enter username"
-        // Setup onChange to update a state variable with the input's value
+        onChange={(e) => setInviteUsername(e.target.value)}
       />
+      <button onClick={handleConversationRequest}>Send Request</button>
       <button onClick={() => {
-        // Implement sending request functionality here
-        setShowRequestModal(false); // Hide modal after sending request
-      }}>Send Request</button>
-      <button onClick={() => setShowRequestModal(false)}>Cancel</button>
+        setShowRequestModal(false);
+        setInviteUsername('');
+      }}>Cancel</button>
+      {requestError &&
+        <div className="request-error">{requestError}</div>
+      }
     </div>
   </div>
 )}
-
-      {showInvitesModal && (
-        <div className="invites-modal">
-          <div className="invites-modal-content">
-
-              {/* <button onClick={() => {
-              setShowInvitesModal(false); // Hide modal after accepting or declining invite
-            }}>Invites</button> */}
-            <h2>Invites</h2>
-            <ul>
-              {invites.map((invites, index) => (
-                <li key={index}>
-                  <button onClick={() => handleAcceptInvite(invites)}>Accept</button>
-                  <button onClick={() => handleDeclineInvite(invites)}>Decline</button>
-                </li>
-              ))}
-            </ul>
-            <button onClick={() => setShowInvitesModal(false)}>Cancel</button>
-          </div>
-        </div>
-      )}
 
       
       <div className="feature-buttons">
@@ -194,6 +169,10 @@ const MessagesPage = () => {
         </Link>
         
         <button onClick={createGroup}>Create group</button>
+
+        {/* {!showRequestForm && (
+        <button onClick={handleRequestButtonClick}>Request Conversation</button>
+        )} */}
 
         <button onClick={() => setShowRequestModal(true)}>Send Request</button>
 

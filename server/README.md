@@ -1,12 +1,8 @@
 # Firework.Server
 
-TODO (https://opensource.guide/starting-a-project/):
-- Select a license???
-- Write an actual README
-- Contributing guidelines
-- Set up the actual ecosystem
-- Add a gitignore file
-- Agree on code style conventions
-- Do we need to write tests for our code?
-
-Follow [code style](CODESTYLE.md) please.
+Setup:
+1. Open a terminal and navigate to the server directory.
+2. `npm install`
+3. In the `src` directory, make a copy of `config.json.example` and rename it to `config.json`.
+4. Edit `config.json` by supplying a string to use as the key used to sign JWTs. (For development purposes this can be pretty much any string.)
+5. Run `node .` in the server directory.

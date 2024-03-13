@@ -15,14 +15,20 @@ import FriendInvite from './database/friendInvite.js';
 
 import FireworkAuth from './auth/fireworkAuth.js';
 
+// connect to databases
 const db = new FireworkDatabase("sqlite", "db.sqlite");
-await db.sync({ force: true });
+await db.sync({ force: true }); // resets database for testing
 
 const auth = new FireworkAuth("sqlite", "auth.sqlite");
-await auth.sync({ force: true });
+await auth.sync({ force: true }); // reset database for testing
 
+// calls a bunch of database manipulation functions for testing
 await test();
 
+/**
+ * Calls a bunch of database manipulation functions
+ * to see if they actually work.
+ */
 async function test() {
 	const richard = await User.createUser("Richard", "Richard");
 	await auth.registerUser(richard.id, "Richard", "password");
