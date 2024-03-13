@@ -147,6 +147,10 @@ const MessagesPage = () => {
     }
   };
 
+  function anyModalOpen() {
+    return showAddModal || showRequestModal || showGroupModal || showInvitesModal;
+  }
+
   return (
     <div className="messaging-container">
 
@@ -197,10 +201,6 @@ const MessagesPage = () => {
       {showInvitesModal && (
         <div className="invites-modal">
           <div className="invites-modal-content">
-
-              {/* <button onClick={() => {
-              setShowInvitesModal(false); // Hide modal after accepting or declining invite
-            }}>Invites</button> */}
             <h2>Invites</h2>
             <ul>
               {invites.map((invites, index) => (
@@ -224,13 +224,13 @@ const MessagesPage = () => {
       
       <div className="feature-buttons">
 
-        <button onClick={() => setShowAddModal(true)}>Add User</button>
+        <button onClick={() => !anyModalOpen() && setShowAddModal(true)}>Add User</button>
         
-        <button onClick={() => setShowGroupModal(true)}>Create Group</button>
+        <button onClick={() => !anyModalOpen() && setShowGroupModal(true)}>Create Group</button>
 
-        <button onClick={() => setShowRequestModal(true)}>Send Request</button>
+        <button onClick={() => !anyModalOpen() && setShowRequestModal(true)}>Send Request</button>
 
-        <button onClick={() => setShowInvitesModal(true)}>Invites</button>
+        <button onClick={() => !anyModalOpen() && setShowInvitesModal(true)}>Invites</button>
         
       </div>
     </div>
