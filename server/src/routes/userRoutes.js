@@ -12,7 +12,7 @@ router.post('/createGroup/', createGroup);
 router.get('/getMessages/:groupId', getMessages);
 router.post('/sendMessage/:groupId', sendMessage);
 router.post('/acceptFriendInvite/', acceptFriendInvite);
-router.pose('/declineFriendInvite/', declineFriendInvite);
+router.post('/declineFriendInvite/', declineFriendInvite);
 router.post('/sendFriendInvite/', sendFriendInvite);
 router.get('/sendFriendInvite/', getIncomingFriendInvites);
 router.get('/getOutgoingFriendInvites/', getOutgoingFriendInvites);
