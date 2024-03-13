@@ -5,6 +5,10 @@ import { Link } from "react-router-dom";
 import { sendMessageRoute, getMessagesRoute } from "../utils/apiRoutes";
 
 export default function Chat({ selectedGroup, user }) {
+ 
+    const [latitude, setLatitude] = useState(null);
+    const [longitude, setLongitude] = useState([]);
+
     const [messages, setMessages] = useState([]);
 
     useEffect(() => {
@@ -48,32 +52,55 @@ export default function Chat({ selectedGroup, user }) {
             setMessages(updatedMessages);
 
             console.log(selectedGroup);
-
+            if (latitude !== null && longitude !== null)
+            {
+              const event = {
+              author: user.id,
+              longitude: longitude,
+              latitude: latitude,
+            }
             // For testing
-            const res = await axios.post(sendMessageRoute + '/' + selectedGroup.id, {
-                message: message
-            });
+              const res = await axios.post(sendMessageRoute + '/' + selectedGroup.id, {
+                message: message,
+                event: event
+              });
 
-            if (res.data.status) {
+              if (res.data.status) {
                 // The message was sent
                 console.log("Message sent:", message);
-            } else {
-                // An error was returned by the server
-                console.log(res.data.msg);
+              } else {
+                  // An error was returned by the server
+                  console.log(res.data.msg);
+              }
             }
-        }
+            else{
+                // For testing
+            const res = await axios.post(sendMessageRoute + '/' + selectedGroup.id, {
+              message: message,
+            });
+
+          if (res.data.status) {
+            // The message was sent
+            console.log("Message sent:", message);
+          } else {
+              // An error was returned by the server
+              console.log(res.data.msg);
+          }
+              }
+          }
     }
+//author lat long
 
-
-  const sendLocation = () => {
+  const getLocation = () => {
     if (selectedGroup) {
             if (navigator.geolocation){
               navigator.geolocation.getCurrentPosition(
                 (position) => {
-                  const { latitude, longitude } = position.coords;
-                  const embeddedMessage = { content: "My location!", type: "location", latitude, longitude };
+                  setLatitude(position.latitude);
+                  setLongitude(position.longitude);
+                  /*const embeddedMessage = { content: "My location!", type: "location", latitude, longitude };
                   const updateConversation = [...messages, embeddedMessage];
-                  setMessages(updateConversation);
+                  setMessages(updateConversation);*/
           },
           (error) => {
             console.log('Error getting location', error);
@@ -100,7 +127,7 @@ export default function Chat({ selectedGroup, user }) {
                 </div>
             ))}
             <div className="location-send">
-                <button onClick={sendLocation}>Send my location</button> 
+                <button onClick={getLocation}>Send my location</button> 
             </div>
             
             {selectedGroup && <ChatInput sendMessage={sendMessage} />}
