@@ -2,6 +2,10 @@ import { Model, DataTypes } from "sequelize";
 import User from "./user.js";
 import Group from "./group.js";
 
+/**
+ * Represents an invitation for a user to join a group.
+ * Similar to a friend request.
+ */
 export default class GroupInvite extends Model {
 	static initialize(sequelize) {
 		GroupInvite.init({
