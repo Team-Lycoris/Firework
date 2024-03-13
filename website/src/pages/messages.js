@@ -110,7 +110,7 @@ const MessagesPage = () => {
 
       <GroupList groups={groups} selectGroup={setSelectedGroup} />
 
-      <Chat selectedGroup={selectedGroup}/>
+      <Chat selectedGroup={selectedGroup} user={user}/>
 
       {showRequestModal && (
   <div className="request-modal">

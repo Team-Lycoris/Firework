@@ -9,16 +9,13 @@ export default function GroupList({ groups, selectGroup }) {
         console.log(group);
     }
 
+    
     return (
         <div className="conversations-list">
         {groups.map((group, index) => (
-            <div className="conversation" key={index}>
+            <div key={index}>
                 <button 
-                    className={
-                        `button conversation-select ${
-                        selectedGroup === index ?
-                        'active-person' : '' }`
-                    }
+                    className="conversation-select"
                     onClick={() => changeGroup(group, index)} 
                 >
                 {group.name}

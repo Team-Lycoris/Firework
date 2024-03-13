@@ -54,7 +54,7 @@ export default class User extends Model {
 		if (!(await this.getGroups()).find((group) => group.id === groupId))
 			throw "User does not belong to group."
 
-		const message = await Message.create({ author: this.id, content: content, event: eventId });
+		const message = await Message.create({ author: this.id, username: this.username, content: content, event: eventId });
 		await MessageVisibility.create({ MessageId: message.id, GroupId: groupId });
 		return message;
 	}
@@ -71,7 +71,7 @@ export default class User extends Model {
 		if (!groupIds.every((groupId) => correctGroupIds.includes(groupId)))
 			throw "User does not belong to one of the groups."
 
-		const message = await Message.create({ author: this.id, content: content, event: eventId });
+		const message = await Message.create({ author: this.id, username: this.username, content: content, event: eventId });
 		const messageVisibilities = groupIds.map((groupId) => ({ MessageId: message.id, GroupId: groupId }));
 		await MessageVisibility.bulkCreate(messageVisibilities);
 	}
