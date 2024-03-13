@@ -1,5 +1,8 @@
 import { DataTypes, Model } from "sequelize";
 
+/**
+ * Information needed for user authentication
+ */
 export default class UserHash extends Model {
 	static initialize(sequelize) {
 		UserHash.init({

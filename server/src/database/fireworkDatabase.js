@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes } from 'sequelize';
+import { Sequelize } from 'sequelize';
 
 import User from "./user.js"
 import Group from "./group.js"
@@ -9,6 +9,13 @@ import MessageVisibility from "./messageVisibility.js"
 import GroupInvite from './groupInvite.js';
 import FriendInvite from './friendInvite.js';
 
+/**
+ * Main database containing most of the data necessary
+ * for the service to run.
+ *
+ * Information necessary for user authentication is stored
+ * in FireworkAuth.
+ */
 export default class FireworkDatabase extends Sequelize {
 	constructor(dialect, storage) {
 		// database to connect to
@@ -27,6 +34,9 @@ export default class FireworkDatabase extends Sequelize {
 		GroupInvite.initialize(this);
 		FriendInvite.initialize(this);
 
+		// define associations
+		// auto-implements many functions that we use
+		// see the Sequelize page regarding associations
 		User.belongsToMany(Group, { through: GroupMembership });
 		Group.belongsToMany(User, { through: GroupMembership });
 
