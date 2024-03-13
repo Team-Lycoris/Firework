@@ -20,7 +20,9 @@ const MessagesPage = () => {
   const [showGroupModal, setShowGroupModal] = useState(false);
   const [inviteUsername, setInviteUsername] = useState('');
   const [showInvitesModal, setShowInvitesModal] = useState(false);
-  const [invites, setInvites] = useState(['user1', 'user2']);
+  const [invites, setInvites] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addUser, setAddUser] = useState('');
 
   const handleRequestButtonClick = () => {
     setShowRequestForm(!showRequestForm);
@@ -44,7 +46,7 @@ const MessagesPage = () => {
       getSelfInfo();
     }
   }, []);
-
+  
   async function getSelfInfo() {
     const selfInfo = await axios.get(getSelfInfoRoute);
     if (selfInfo.data.status) {
@@ -64,6 +66,7 @@ const MessagesPage = () => {
     if (user) {
       const res = await axios.get(getGroupsRoute);
       if (res.data.status) {
+        setGroups(res.data.groups);
         console.log(res.data.groups);
         const grps = res.data.groups.map((grp) => {
           if (grp.isDm) {
@@ -104,7 +107,7 @@ const MessagesPage = () => {
     try {
       setRequestError('');
       // Send a request to the server to initiate a conversation with the specified username
-      const response = await axios.post(sendFriendInviteRoute, {
+      const response = await axios.post(sendFriendInviteRoute, { 
         inviteeUsername: inviteUsername
       });
       console.log(response.data); // Log the response from the server
@@ -122,6 +125,10 @@ const MessagesPage = () => {
     }
   };
 
+  const handleAddRequest = async (e) => {
+    e.preventDefault();
+  }
+
   const handleAcceptInvite = async (invite) => {
     try {
       const response = await axios.post('/api/invites/accept', { inviteId: invite.id });
@@ -130,7 +137,7 @@ const MessagesPage = () => {
       console.error('Error accepting invite:', error);
     }
   };
-
+  
   const handleDeclineInvite = async (invite) => {
     try {
       const response = await axios.post('/api/invites/decline', { inviteId: invite.id });
@@ -167,6 +174,26 @@ const MessagesPage = () => {
   </div>
 )}
 
+{showAddModal && (
+  <div className="add-user-modal">
+    <div className="add-user-modal-content">
+      <input
+        type="text"
+        placeholder="Enter username"
+        onChange={(e) => setAddUser(e.target.value)}
+      />
+      <button onClick={handleAddRequest}>Add User</button>
+      <button onClick={() => {
+        setShowAddModal(false);
+        setAddUser('');
+      }}>Cancel</button>
+      {requestError &&
+        <div className="request-error">{requestError}</div>
+      }
+    </div>
+  </div>
+)}
+
       {showInvitesModal && (
         <div className="invites-modal">
           <div className="invites-modal-content">
@@ -190,26 +217,21 @@ const MessagesPage = () => {
 
 
 <CreateGroupModal
-          showModal={showGroupModal}
+          showModal={showGroupModal} 
           setShowModal={setShowGroupModal}
           setGroups={setGroups}
         />
-
+      
       <div className="feature-buttons">
-        {/* <Link to="/">
-          <button className="home-button">Home</button>
-        </Link> */}
 
+        <button onClick={() => setShowAddModal(true)}>Add User</button>
+        
         <button onClick={() => setShowGroupModal(true)}>Create Group</button>
-
-        {/* {!showRequestForm && (
-        <button onClick={handleRequestButtonClick}>Request Conversation</button>
-        )} */}
 
         <button onClick={() => setShowRequestModal(true)}>Send Request</button>
 
         <button onClick={() => setShowInvitesModal(true)}>Invites</button>
-
+        
       </div>
     </div>
   );
