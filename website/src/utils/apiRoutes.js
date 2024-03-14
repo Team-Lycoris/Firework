@@ -3,8 +3,8 @@ const host = 'http://localhost:8080';
 export const loginRoute = host + '/api/auth/login';
 export const registerRoute = host + '/api/auth/register';
 
-export const acceptFriendInviteRoute = '/api/user/acceptFriendInvite';
-export const declineFriendInviteRoute = '/api/user/declineFriendInvite';
+export const acceptFriendInviteRoute = host + '/api/user/acceptFriendInvite';
+export const declineFriendInviteRoute = host + '/api/user/declineFriendInvite';
 export const sendFriendInviteRoute = host + '/api/user/sendFriendInvite';
 export const getSelfInfoRoute = host + '/api/user/getSelfInfo';
 export const createDMRoute = host + '/api/user/createDM';

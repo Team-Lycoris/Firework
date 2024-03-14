@@ -15,38 +15,13 @@ export default function Chat({ selectedGroup, user, socket }) {
     const [receivedMessage, setReceivedMessage] = useState('');
     const [addUser, setAddUser] = useState('');
 
+    // Fetch messages when the selected group is changed
     useEffect(() => {
         console.log('Getting messages');
         getMessages();
     }, [selectedGroup]);
 
-    useEffect(() => {
-        if (socket.current) {
-            socket.current.on('receive-message', (msg) => {
-                setReceivedMessage(msg);
-            });
-        }
-    }, []);
-
-    useEffect(() => {
-        if (receivedMessage) {
-            setMessages((msgs) => [...msgs, receivedMessage]);
-        }
-    }, [receivedMessage])
-
-    function receiveMessage(message) {
-        setMessages((prev) => [...prev, message]);
-    }
-
-    const handleAddRequest = async (username) => {
-      const res = await axios.post(addUserToGroupRoute, {
-        groupId: selectedGroup.id,
-        inviteeUsername: username
-      });
-
-      console.log(res.data.status ? username + "added to group " + selectedGroup.id : res.data.msg);
-    }
-
+    // Fetch messages from the server
     async function getMessages() {
         if (selectedGroup) {
             const res = await axios.get(getMessagesRoute + '/' + selectedGroup.id);
@@ -72,75 +47,120 @@ export default function Chat({ selectedGroup, user, socket }) {
 
         }
     }
+
+    // Create listener to handle receiving messages 
+    // from other users using sockets
+    useEffect(() => {
+        if (socket.current) {
+            socket.current.on('receive-message', receiveMessage);
+            console.log('Message socket on');
+        
+            return () => {
+                socket.current.off('receive-message', receiveMessage);
+                console.log('Message socket off');
+            }
+        }
+    }, [selectedGroup]);
+
+    function receiveMessage(data) { 
+        console.log(data);
+        console.log(selectedGroup.id);
+        if (data.groupId == selectedGroup.id) {
+            //setReceivedMessage(data.message);
+            setMessages((msgs) => [...msgs, data.message]);
+        }
+    }
+
+    useEffect(() => {
+        if (receivedMessage) {
+            setMessages((msgs) => [...msgs, receivedMessage]);
+        }
+    }, [receivedMessage])
+
+    // Handle adding a user to the currently selected group
+    const handleAddRequest = async (username) => {
+        setRequestError('');
+        try {
+            // Await a response from the server
+            const res = await axios.post(addUserToGroupRoute, {
+                groupId: selectedGroup.id,
+                inviteeUsername: username
+            });
+
+            if (res.data.status) {
+                // The user was added to the group.
+                console.log(username + " added to group " + selectedGroup.id);
+                // Clear the input field and hide the modal
+                setAddUser('');
+                setShowAddModal(false);
+                
+                // Send an update to the recipient
+                const socketData = {
+                    group: res.data.group,
+                    invitee: res.data.invitee
+                }
+                socket.current.emit('add-to-group', socketData);
+            } else {
+                // An error occurred when trying to invite the user
+                console.error('Error adding user to group:', res.data.msg);
+                // Set the error field
+                setRequestError(res.data.msg);
+            }
+        } catch(ex) {
+            console.error('Error adding user to group:', ex);
+            setRequestError('Unknown error');
+        }
+        
+    }
+
     //temp event assignment for testing purposes
     const sendMessage = async (message) => {
         if (message !== '' && selectedGroup) {
-            // Update the message history
-            const updatedMessages = [...messages, {
-                content: message,
-                author: user.id,
-                username: user.username,
-                type: 'text'
-            }];
-            setMessages(updatedMessages);
+            let event = undefined;
 
             console.log(selectedGroup);
             if (latitude !== null && longitude !== null)
             {
-                const event = {
+                event = {
                     author: user.id,
                     longitude: longitude,
                     latitude: latitude,
                 }
-
                 setLatitude(null);
                 setLongitude(null);
-
-                // Send the message to the database
-                const res = await axios.post(sendMessageRoute + '/' + selectedGroup.id, {
-                    message: message,
-                    event: event
-                });
-
-                if (res.data.status) {
-                    // The message was sent
-                    console.log("Message sent:", res.data.message);
-
-                    // Send the message to other connected users
-                    const data = {
-                        message: res.data.message,
-                        event: event,
-                        groupId: selectedGroup.id
-                    }
-                    // Send the message to other users
-                    socket.current.emit('send-message', data);
-                } else {
-                    // An error was returned by the server
-                    console.log(res.data.msg);
-                }
             }
-            else{
-                // For testing
-                const res = await axios.post(sendMessageRoute + '/' + selectedGroup.id, {
-                    message: message,
-                });
+            // Send the message to the database
+            const res = await axios.post(sendMessageRoute + '/' + selectedGroup.id, {
+                message: message,
+                event: event
+            });
 
-                if (res.data.status) {
-                    // The message was sent
-                    console.log("Message sent:", message);
+            if (res.data.status) {
+                // The message was sent
+                console.log("Message sent:", res.data.message);
 
-                    // Send the message to other connected users
-                    const data = {
-                        message: res.data.message,
-                        event: null,
-                        groupId: selectedGroup.id
-                    }
-                    // Send the message to other users
-                    socket.current.emit('send-message', data);
-                } else {
-                    // An error was returned by the server
-                    console.log(res.data.msg);
+                // Update the message history
+                const updatedMessages = [...messages, {
+                    id: res.data.message.id,
+                    content: res.data.message.content,
+                    author: res.data.message.author,
+                    username: res.data.message.username,
+                    event: res.data.message.event,
+                    type: 'text'
+                }];
+                setMessages(updatedMessages);
+
+                // Send the message to other connected users
+                const data = {
+                    message: res.data.message,
+                    event: event,
+                    groupId: selectedGroup.id
                 }
+                // Send the message to other users
+                socket.current.emit('send-message', data);
+            } else {
+                // An error was returned by the server
+                console.log(res.data.msg);
             }
         }
     }
@@ -201,12 +221,11 @@ export default function Chat({ selectedGroup, user, socket }) {
               <input
                 type="text"
                 placeholder="Enter username"
+                value={addUser}
                 onChange={(e) => setAddUser(e.target.value)}
               />
               <button onClick={() => {
                 handleAddRequest(addUser);
-                setShowAddModal(false);
-                setAddUser('');
                 }}>Add User</button>
               <button onClick={() => {
                 setShowAddModal(false);

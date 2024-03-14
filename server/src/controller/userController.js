@@ -57,7 +57,12 @@ export async function sendFriendInvite(req, res, next) {
         const invite = await FriendInvite.create({ inviter: inviter.id, invitee: invitee.id,
                                                    inviterName: inviter.username, inviteeName: invitee.username });
 
-        return res.json({status: true, invite: invite.toJSON()});
+        return res.json({
+            status: true,
+            invite: invite.toJSON(),
+            inviter: inviter.toJSON(),
+            invitee: invitee.toJSON()
+        });
     } catch(ex) {
         next(ex);
     }
@@ -66,6 +71,9 @@ export async function sendFriendInvite(req, res, next) {
 export async function acceptFriendInvite(req, res, next) {
     try {
         const invite = await FriendInvite.findOne({ where: { invitee: req.userId, inviter: req.body.inviterId }});
+        if (invite === null) {
+            return res.json({status: false, msg: "Invite not found"});
+        }
         const group = await invite.startFriendship();
         return res.json({status: true, group: group.toJSON()});
     } catch(ex) {
@@ -76,6 +84,9 @@ export async function acceptFriendInvite(req, res, next) {
 export async function declineFriendInvite(req, res, next) {
     try {
         const invite = await FriendInvite.findOne({ where: { invitee: req.userId, inviter: req.body.inviterId } });
+        if (invite === null) {
+            return res.json({status: false, msg: "Invite not found"});
+        }
         await invite.destroy();
         return res.json({status: true});
     } catch(ex) {
@@ -98,11 +109,18 @@ export async function addUserToGroup(req, res, next) {
         if (invitee === null) {
             return res.json({status: false, msg: "User does not exist"});
         }
-        if (await group.hasUser(inviter)) {
-            group.addUser(invitee);
+        const inviterInGroup = await group.hasUser(inviter);
+        if (!inviterInGroup) {
+            return res.json({status: false, msg: "You are not in this group"});
+        }
+        const inviteeInGroup = await group.hasUser(invitee);
+        if (inviteeInGroup) {
+            return res.json({status: false, msg: "The user is already in this group"});
         }
 
-        return res.json({status: true, group: group.toJSON()});
+        group.addUser(invitee);
+
+        return res.json({status: true, group: group.toJSON(), invitee: invitee.toJSON()});
     } catch(ex) {
         next(ex);
     }

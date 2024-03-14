@@ -63,8 +63,42 @@ const MessagesPage = () => {
   useEffect(() => {
     if(user) {
       fetchInvites();
+      getGroups(user);
     }
   }, [user]);
+
+  // Create listener to handle being added to groups and
+  // receiving friend invites by other users using sockets
+  useEffect(() => {
+    if (socket.current) {
+      socket.current.on('receive-group', receiveGroup);
+      console.log('Group socket on');
+      socket.current.on('receive-invite', receiveInvite);
+      console.log('Invite socket on');
+
+      return () => {
+        socket.current.off('receive-group', receiveGroup);
+        console.log('Group socket off');
+        socket.current.off('receive-invite', receiveInvite);
+        console.log('Invite socket off');
+      }
+    }
+  }, [socket.current]);
+
+  function receiveGroup(data) { 
+    console.log(data);
+    if (data.group) {
+      //setReceivedMessage(data.group);
+      setGroups((grps) => [...grps, data.group]);
+    }
+  }
+
+  function receiveInvite(data) {
+    console.log(data);
+    if (data.invite) {
+      setInvites((invts) => [...invts, data.invite]);
+    }
+  }
 
   const fetchInvites = async () => {
     try {
@@ -79,10 +113,6 @@ const MessagesPage = () => {
       console.error('Failed to fetch invites');
     }
   }
-
-  useEffect(() => {
-    getGroups(user);
-  }, [user])
 
   async function getGroups(user) {
     if (user) {
@@ -111,18 +141,6 @@ const MessagesPage = () => {
     }
   }
 
-  const createDM = async () => {
-    const res = await axios.post(createDMRoute, {
-      otherUser: 1
-    });
-    console.log(res);
-  }
-
-  // Function to handle selecting a conversation
-  const handleConversationSelect = (conversationId) => {
-    setSelectedGroup(conversationId);
-  };
-
 
  const handleConversationRequest = async (e) => {
     e.preventDefault();
@@ -137,6 +155,15 @@ const MessagesPage = () => {
       if (response.data.status) {
         setShowRequestModal(false); // Hide modal after sending request
         setInviteUsername('');
+
+        // Send an update to the recipient
+        const socketData = {
+          invite: response.data.invite,
+          inviter: response.data.inviter,
+          invitee: response.data.invitee
+        }
+        socket.current.emit('send-friend-invite', socketData);
+
       } else {
         setRequestError(response.data.msg);
         console.error(response.data.msg);
@@ -149,7 +176,7 @@ const MessagesPage = () => {
 
   const handleAcceptInvite = async (invite) => {
     try {
-      const response = await axios.post(acceptFriendInviteRoute, { inviteId: invite.id });
+      const response = await axios.post(acceptFriendInviteRoute, { inviterId: invite.inviter });
       console.log(response.data); // Log the response from the server
     } catch (error) {
       console.error('Error accepting invite:', error);
@@ -158,7 +185,7 @@ const MessagesPage = () => {
   
   const handleDeclineInvite = async (invite) => {
     try {
-      const response = await axios.post(declineFriendInviteRoute, { inviteId: invite.id });
+      const response = await axios.post(declineFriendInviteRoute, { inviterId: invite.inviter });
       console.log(response.data); // Log the response from the server
     } catch (error) {
       console.error('Error declining invite:', error);
@@ -205,8 +232,8 @@ const MessagesPage = () => {
               {invites.map((invite, index) => (
                 <div key={index}>
                   {invite.inviterName}
-                  <button onClick={() => handleAcceptInvite(invites)}>Accept</button>
-                  <button onClick={() => handleDeclineInvite(invites)}>Decline</button>
+                  <button onClick={() => handleAcceptInvite(invite)}>Accept</button>
+                  <button onClick={() => handleDeclineInvite(invite)}>Decline</button>
                 </div>
               ))}
           
