@@ -1,7 +1,5 @@
 # Firework.Website
 
-Public GitHub Link: https://github.com/Team-Lycoris/Firework
-
 Setup:
 1. Open up a terminal and navigate into the website directory.
 2. Run `npm install`
