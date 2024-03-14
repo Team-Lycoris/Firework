@@ -1,5 +1,12 @@
 # Firework.Website
 
+Obtain API key:
+1. Go to this link to the Google Maps Platform Credentials page `https://console.cloud.google.com/projectselector2/google/maps-apis/credentials?utm_source=Docs_CreateAPIKey&utm_content=Docs_maps-backend&_gl=1*17wnwbm*_ga*NjMwNzY5OTQuMTcwODkxMDgwNg..*_ga_NRWSTWS78N*MTcxMDM5MTUwNy4xNS4xLjE3MTAzOTE1MDkuMC4wLjA.`
+2. Click Create credentials > API key.
+3. The API Key will be on the Credentials page under API keys.
+4. Note that acquiring a key requires making a cloud account and linking a payment method, however the payment method will not be used unless the "free use limit" of the key is exceeded.
+5. For help, navigate to `https://developers.google.com/maps/documentation/javascript/get-api-key`
+
 Setup:
 1. Open up a terminal and navigate into the website directory.
 2. Run `npm install`
