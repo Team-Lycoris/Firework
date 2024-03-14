@@ -5,6 +5,8 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { sendMessageRoute, getMessagesRoute, addUserToGroupRoute } from "../utils/apiRoutes";
 
+import Config from "../config.json";
+
 export default function Chat({ selectedGroup, user, socket }) {
 
     const [latitude, setLatitude] = useState(null);
@@ -213,7 +215,9 @@ export default function Chat({ selectedGroup, user, socket }) {
                             <div className="message-content">
                             {
                                 message.latitude !== null && message.longitude !== null ?
-                                <Link to={"/map"}><b>{message.content}</b></Link> :
+                                <Link to={Config.googleMapKey === "" ?
+                                "https://maps.google.com/maps?q=" + message.latitude + "," + message.longitude :
+                                "/map"} state={{ lat: message.latitude, long: message.longitude }}><b>{message.content}</b></Link> :
                                 <div>{message.content}</div>
                             }
                             </div>
