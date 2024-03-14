@@ -12,6 +12,7 @@ export default function GroupList({ groups, selectGroup }) {
     
     return (
         <div className="conversations-list">
+        <h1 className="title">Firework</h1>
         {groups.map((group, index) => (
             <div key={index}>
                 <button 

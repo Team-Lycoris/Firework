@@ -81,6 +81,13 @@
     border-radius: 30px;
   }
   
+  .title {
+    text-align: center;
+    height: min(100px, 8%);
+    margin: 0px;
+    padding: 0px 10px;
+  }
+
   .author {
     font-size: 13px;
   }
@@ -129,6 +136,7 @@
   }
   
   .message-input button {
+    margin: 0px;
     padding: 10px 20px;
     border: none;
     background-color: #007bff;
