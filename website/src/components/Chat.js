@@ -48,13 +48,13 @@ export default function Chat({ selectedGroup, user, socket }) {
         }
     }
 
-    // Create listener to handle receiving messages 
+    // Create listener to handle receiving messages
     // from other users using sockets
     useEffect(() => {
         if (socket.current) {
             socket.current.on('receive-message', receiveMessage);
             console.log('Message socket on');
-        
+
             return () => {
                 socket.current.off('receive-message', receiveMessage);
                 console.log('Message socket off');
@@ -62,20 +62,36 @@ export default function Chat({ selectedGroup, user, socket }) {
         }
     }, [selectedGroup]);
 
-    function receiveMessage(data) { 
+    function receiveMessage(data) {
         console.log(data);
         console.log(selectedGroup.id);
         if (data.groupId == selectedGroup.id) {
             //setReceivedMessage(data.message);
             setMessages((msgs) => [...msgs, data.message]);
         }
+        pushNotification(data);
     }
 
     useEffect(() => {
         if (receivedMessage) {
             setMessages((msgs) => [...msgs, receivedMessage]);
+            // pushNotification(receivedMessage);
         }
     }, [receivedMessage])
+
+    function pushNotification(data) {
+        if (user.id === data.message.author)
+            return
+
+        if (Notification.permission === "default") {
+            Notification.requestPermission().then((result) => console.log(result));
+        }
+
+        if (Notification.permission === "granted") {
+            const title = data.authorName + (data.isDm ? "" : " in " + data.groupName);
+            const notif = new Notification(title, { body: data.message.content });
+        }
+    }
 
     // Handle adding a user to the currently selected group
     const handleAddRequest = async (username) => {
@@ -93,7 +109,7 @@ export default function Chat({ selectedGroup, user, socket }) {
                 // Clear the input field and hide the modal
                 setAddUser('');
                 setShowAddModal(false);
-                
+
                 // Send an update to the recipient
                 const socketData = {
                     group: res.data.group,
@@ -110,7 +126,7 @@ export default function Chat({ selectedGroup, user, socket }) {
             console.error('Error adding user to group:', ex);
             setRequestError('Unknown error');
         }
-        
+
     }
 
     //temp event assignment for testing purposes

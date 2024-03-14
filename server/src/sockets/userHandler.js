@@ -17,6 +17,11 @@ export default function userHandler(io, socket, connectedSockets) {
             }
             const recipients = await group.getUsers();
 
+            // a bit of a hack to include author and group name in data for notifications
+            data.groupName = group.name;
+            data.isDm = group.isDm;
+            data.authorName = (await User.findOne({ where: {id: data.message.author}})).username;
+
             recipients.forEach((recipient) => {
                 const recipientSocket = connectedSockets.get(recipient.id);
                 if (recipientSocket) {
@@ -91,7 +96,7 @@ export default function userHandler(io, socket, connectedSockets) {
     }
 
     function handleAcceptFriendInvite(data) {
-        
+
     }
 
     socket.on('disconnect', handleDisconnect);
