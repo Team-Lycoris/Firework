@@ -5,6 +5,8 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { sendMessageRoute, getMessagesRoute, addUserToGroupRoute } from "../utils/apiRoutes";
 
+import Config from "../config.json";
+
 export default function Chat({ selectedGroup, user, socket }) {
 
     const [latitude, setLatitude] = useState(null);

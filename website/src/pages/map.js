@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import GoogleMapReact from 'google-map-react';
 
+import Config from "../config.json";
+
 const MapComponent = ({ text }) => <div>{text}</div>;
 
 //lat and long are examples
@@ -22,21 +24,21 @@ const MyMap = () => {
         const getAddress = async () => {
           try {
             //add api key in url
-            const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${markerPosition.lat},${markerPosition.lng}&key=APIKEY`);
+            const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${markerPosition.lat},${markerPosition.lng}&key=` + Config.googleMapKey);
             const data = await response.json();
             setAddress(data.results[0].formatted_address);
           } catch (error) {
             console.error('Error fetching address:', error);
           }
         };
-    
+
         getAddress();
       }, [markerPosition]);
 
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', width: '80%', margin: '0 auto' }}>      
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', width: '80%', margin: '0 auto' }}>
             <GoogleMapReact
-                bootstrapURLKeys={{ key: '' }} // add api key
+              bootstrapURLKeys={{ key: Config.googleMapKey }} // add api key
                 defaultCenter={defaultCenter}
                 defaultZoom={16}
                 style={{ height: '100%', width: '100%' }}
@@ -56,8 +58,8 @@ const MyMap = () => {
         );
 };
 
-//adds circle marker to approximate location 
-const Marker = ({ text }) => 
+//adds circle marker to approximate location
+const Marker = ({ text }) =>
 (
 <div style={{ position: 'relative' }}>
     <svg
@@ -79,4 +81,3 @@ const Marker = ({ text }) =>
 
 
 export default MyMap;
-
