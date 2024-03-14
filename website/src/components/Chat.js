@@ -251,7 +251,7 @@ export default function Chat({ selectedGroup, user, socket }) {
 
             <div className="chat-features">
                 <button onClick={getLocation}>Send my location</button>
-                <button onClick={() => setShowAddModal(true)}>Add User</button>
+                {!selectedGroup.isDm && <button onClick={() => setShowAddModal(true)}>Add User</button>}
             </div>
 
             {selectedGroup && <ChatInput sendMessage={sendMessage} />}
