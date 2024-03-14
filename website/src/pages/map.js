@@ -7,14 +7,16 @@ import Config from "../config.json";
 
 const MapComponent = ({ text }) => <div>{text}</div>;
 
-//lat and long are examples
+/*
+    creates embedded map from google maps on the page
+*/
 const MyMap = () => {
       const location = useLocation();
       const { lat, long } = location.state;
 
       const [address, setAddress] = useState("");
 
-      //gets address from coordinates to display
+      //gets address from coordinates to display to user
       useEffect(() => {
         const getAddress = async () => {
           try {
