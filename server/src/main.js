@@ -79,7 +79,7 @@ async function test() {
 	await testGroup2.addUser(richard);
 	await testGroup3.addUser(richard);
 
-	await richard.broadcastMessage("broadcast", [testGroup1.id, testGroup2.id, testGroup3.id]);
+	//await richard.broadcastMessage("broadcast", [testGroup1.id, testGroup2.id, testGroup3.id]);
 }
 
 const PORT = 8080;

@@ -33,8 +33,8 @@ export default function Chat({ selectedGroup, user, socket }) {
                         author: msg.author,
                         content: msg.content,
                         username: msg.username,
-                        event: msg.event,
-                        type: 'text'
+                        latitude: msg.latitude,
+                        longitude: msg.longitude
                     }
                     return data;
                 });
@@ -131,24 +131,19 @@ export default function Chat({ selectedGroup, user, socket }) {
     //temp event assignment for testing purposes
     const sendMessage = async (message) => {
         if (message !== '' && selectedGroup) {
-            let event = undefined;
-
             console.log(selectedGroup);
-            if (latitude !== null && longitude !== null)
-            {
-                event = {
-                    author: user.id,
-                    longitude: longitude,
-                    latitude: latitude,
-                }
-                setLatitude(null);
-                setLongitude(null);
-            }
             // Send the message to the database
             const res = await axios.post(sendMessageRoute + '/' + selectedGroup.id, {
                 message: message,
-                event: event
+                latitude: latitude,
+                longitude: longitude
             });
+
+            if (latitude !== null && longitude !== null)
+            {
+                setLatitude(null);
+                setLongitude(null);
+            }
 
             if (res.data.status) {
                 // The message was sent
@@ -160,15 +155,14 @@ export default function Chat({ selectedGroup, user, socket }) {
                     content: res.data.message.content,
                     author: res.data.message.author,
                     username: res.data.message.username,
-                    event: res.data.message.event,
-                    type: 'text'
+                    latitude: res.data.message.latitude,
+                    longitude: res.data.message.longitude
                 }];
                 setMessages(updatedMessages);
 
                 // Send the message to other connected users
                 const data = {
                     message: res.data.message,
-                    event: event,
                     groupId: selectedGroup.id
                 }
                 // Send the message to other users
@@ -216,15 +210,13 @@ export default function Chat({ selectedGroup, user, socket }) {
                     {messages.map((message, index) => (
                         <div className={"message-container " + (message.username === user.username ? "self" : "other")} key={index}>
                             <p className="author">{message.username}</p>
-                            <p className="message-content">
+                            <div className="message-content">
                             {
-                                message.event === null ?
-                                message.content :
-                                <div> <p>{message.content}</p>
-                                <Link to={"/map"}>My Location</Link>
-                                </div>
-                                }
-                            </p>
+                                message.latitude !== null && message.longitude !== null ?
+                                <Link to={"/map"}><b>{message.content}</b></Link> :
+                                <div>{message.content}</div>
+                            }
+                            </div>
                         </div>
                     ))}
                 </div>

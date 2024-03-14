@@ -29,13 +29,13 @@ export default class Message extends Model {
 				type: DataTypes.STRING(2000), // max length 2000
 				allowNull: false
 			},
-			event: {
-				type: DataTypes.INTEGER,
-				allowNull: true,
-				references: {
-					model: Event,
-					key: "id"
-				}
+			latitude: {
+				type: DataTypes.DOUBLE,
+				allowNull: true
+			},
+			longitude: {
+				type: DataTypes.DOUBLE,
+				allowNull: true
 			}
 		}, {
 			sequelize: sequelize,
