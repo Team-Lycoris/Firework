@@ -168,8 +168,8 @@ export default function Chat({ selectedGroup, user, socket }) {
             }
         }
     }
-//author lat long
 
+// get user location coordinates through geolocation
   const getLocation = () => {
     if (selectedGroup) {
             if (navigator.geolocation){
@@ -177,9 +177,7 @@ export default function Chat({ selectedGroup, user, socket }) {
                 (position) => {
                   setLatitude(position.coords.latitude);
                   setLongitude(position.coords.longitude);
-                  /*const embeddedMessage = { content: "My location!", type: "location", latitude, longitude };
-                  const updateConversation = [...messages, embeddedMessage];
-                  setMessages(updateConversation);*/
+                  
           },
           (error) => {
             console.log('Error getting location', error);
