@@ -14,7 +14,6 @@ export default function Chat({ selectedGroup, user, socket }) {
     const [requestError, setRequestError] = useState('');
     const [messages, setMessages] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false);
-    const [receivedMessage, setReceivedMessage] = useState('');
     const [addUser, setAddUser] = useState('');
 
     // Fetch messages when the selected group is changed
@@ -64,6 +63,7 @@ export default function Chat({ selectedGroup, user, socket }) {
         }
     }, [selectedGroup]);
 
+    // Adds a message to the message array
     function receiveMessage(data) {
         console.log(data);
         if (selectedGroup && data.groupId == selectedGroup.id) {
@@ -72,13 +72,6 @@ export default function Chat({ selectedGroup, user, socket }) {
         }
         pushNotification(data);
     }
-
-    useEffect(() => {
-        if (receivedMessage) {
-            setMessages((msgs) => [...msgs, receivedMessage]);
-            // pushNotification(receivedMessage);
-        }
-    }, [receivedMessage])
 
     function pushNotification(data) {
         if (user.id === data.message.author)

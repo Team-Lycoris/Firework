@@ -86,15 +86,18 @@ const PORT = 8080;
 
 const app = express();
 
+// Initialize the express api routes
 app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRouter);
 app.use('/api/user', authUser, userRouter);
 
+// Start the express server
 const server = app.listen(PORT, () => {
 	console.log('Server started on port', PORT);
 });
 
+// Start the socket.io server
 const io = new Server(server, {
     cors: {
 		origin: "http://localhost:3000",
@@ -102,9 +105,13 @@ const io = new Server(server, {
 	}
 });
 
+// Keep track of the users connected with sockets
 const connectedSockets = new Map();
 
+// Authenticate the socket connections
 io.use(socketAuth);
+
+// Handle socket connections
 io.on('connection', (socket) => {
 	console.log("Client connected");
 	connectedSockets.set(socket.userId, socket.id);

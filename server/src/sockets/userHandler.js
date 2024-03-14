@@ -3,11 +3,13 @@ import Group from "../database/group.js";
 import User from "../database/user.js";
 
 export default function userHandler(io, socket, connectedSockets) {
+    // Remove the disconnected user from the socket map
     function handleDisconnect(reason) {
         console.log('Client disconnected:', reason);
         connectedSockets.delete(socket.userId);
     }
 
+    // Send a message through the socket to a connected user
     async function handleSendMessage(data) {
         try {
             const group = await Group.findOne({ where: { id: data.groupId }});
@@ -36,6 +38,7 @@ export default function userHandler(io, socket, connectedSockets) {
         }
     }
 
+    // Send the group through the socket to a connected user
     async function handleAddToGroup(data) {
         try {
             console.log(data);
@@ -63,6 +66,7 @@ export default function userHandler(io, socket, connectedSockets) {
         }
     }
 
+    // Send a friend invite through the socket to a connected user
     async function handleSendFriendInvite(data) {
         try {
             // Check if inviter exists
@@ -96,6 +100,7 @@ export default function userHandler(io, socket, connectedSockets) {
         }
     }
 
+    // Start the event handlers
     socket.on('disconnect', handleDisconnect);
     socket.on('send-message', handleSendMessage);
     socket.on('add-to-group', handleAddToGroup);

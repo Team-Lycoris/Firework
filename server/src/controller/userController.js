@@ -12,6 +12,7 @@ export async function test(req, res, next) {
     }
 }
 
+// Gets the incoming friend invites that a user has
 export async function getIncomingFriendInvites(req, res, next) {
     try {
         const user = await User.findOne({ where: { id: req.userId }});
@@ -28,6 +29,7 @@ export async function getIncomingFriendInvites(req, res, next) {
     }
 }
 
+// Gets the outgoing friend invites that a user has made
 export async function getOutgoingFriendInvites(req, res, next) {
     try {
         const user = await User.findOne({ where: { id: req.userId }});
@@ -44,6 +46,7 @@ export async function getOutgoingFriendInvites(req, res, next) {
     }
 }
 
+// Sends a friend invite from the requester to the specified user
 export async function sendFriendInvite(req, res, next) {
     try {
         const inviter = await User.findOne({ where: { id: req.userId }});
@@ -76,6 +79,8 @@ export async function sendFriendInvite(req, res, next) {
     }
 }
 
+// Accepts a friend invite and removes it from the db
+// Creates a DM group between the two users
 export async function acceptFriendInvite(req, res, next) {
     try {
         const invite = await FriendInvite.findOne({ where: { invitee: req.userId, inviter: req.body.inviterId }});
@@ -89,6 +94,7 @@ export async function acceptFriendInvite(req, res, next) {
     }
 }
 
+// Declines a friend invite and removes it from the db
 export async function declineFriendInvite(req, res, next) {
     try {
         const invite = await FriendInvite.findOne({ where: { invitee: req.userId, inviter: req.body.inviterId } });
@@ -102,6 +108,7 @@ export async function declineFriendInvite(req, res, next) {
     }
 }
 
+// Adds a user to a group
 export async function addUserToGroup(req, res, next) {
     try {
         console.log(req.body);
@@ -134,6 +141,7 @@ export async function addUserToGroup(req, res, next) {
     }
 }
 
+// Returns user info about the requester
 export async function getSelfInfo(req, res, next) {
     try {
         const user = await User.findOne({ where: { id: req.userId }});
@@ -149,6 +157,7 @@ export async function getSelfInfo(req, res, next) {
     }
 }
 
+// Creates a DM group
 export async function createDM(req, res, next) {
     try {
         const sender = await User.findOne({ where: { id: req.userId }});
@@ -163,6 +172,7 @@ export async function createDM(req, res, next) {
     }
 }
 
+// Creates a group with the requesting user in it
 export async function createGroup(req, res, next) {
     try {
         const user = await User.findOne({ where: { id: req.userId }});
@@ -186,6 +196,7 @@ export async function createGroup(req, res, next) {
     }
 }
 
+// Get all groups that a user is in
 export async function getGroups(req, res, next) {
     try {
         const user = await User.findOne({ where: { id: req.userId }});
@@ -203,6 +214,7 @@ export async function getGroups(req, res, next) {
     }
 }
 
+// Get all messages in a channel from the db
 export async function getMessages(req, res, next) {
     try {
         const group = await Group.findOne({ where: { id: req.params.groupId }});
@@ -220,6 +232,7 @@ export async function getMessages(req, res, next) {
     }
 }
 
+// Sends a message to a channel and adds it to the db
 export async function sendMessage(req, res, next) {
     try {
         const content = req.body.message;
