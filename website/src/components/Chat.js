@@ -217,7 +217,7 @@ export default function Chat({ selectedGroup, user, socket }) {
                                 message.latitude !== null && message.longitude !== null ?
                                 <Link to={Config.googleMapKey === "" ?
                                 "https://maps.google.com/maps?q=" + message.latitude + "," + message.longitude :
-                                 "/map"}><b>{message.content}</b></Link> :
+                                "/map"} state={{ lat: message.latitude, long: message.longitude }}><b>{message.content}</b></Link> :
                                 <div>{message.content}</div>
                             }
                             </div>

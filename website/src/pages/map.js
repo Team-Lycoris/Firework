@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import GoogleMapReact from 'google-map-react';
 
+import { useLocation } from 'react-router-dom';
+
 import Config from "../config.json";
 
 const MapComponent = ({ text }) => <div>{text}</div>;
 
 //lat and long are examples
 const MyMap = () => {
-  const defaultCenter = {
-      lat: 34.0707583,
-      lng: -118.4533039
-    };
-
-  const markerPosition = {
-        lat: 34.0707583,
-        lng: -118.4533039
-      };
+      const location = useLocation();
+      const { lat, long } = location.state;
 
       const [address, setAddress] = useState("");
 
@@ -24,7 +19,7 @@ const MyMap = () => {
         const getAddress = async () => {
           try {
             //add api key in url
-            const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${markerPosition.lat},${markerPosition.lng}&key=` + Config.googleMapKey);
+            const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=` + Config.googleMapKey);
             const data = await response.json();
             setAddress(data.results[0].formatted_address);
           } catch (error) {
@@ -33,24 +28,24 @@ const MyMap = () => {
         };
 
         getAddress();
-      }, [markerPosition]);
+      }, []);
 
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', width: '80%', margin: '0 auto' }}>
             <GoogleMapReact
               bootstrapURLKeys={{ key: Config.googleMapKey }} // add api key
-                defaultCenter={defaultCenter}
+                defaultCenter={{lat: lat, lng: long}}
                 defaultZoom={16}
                 style={{ height: '100%', width: '100%' }}
 
             >
                 <MapComponent
-                lat={defaultCenter.lat}
-                lng={defaultCenter.lng}
+                lat={lat}
+                lng={long}
                 />
                 <Marker
-                lat={markerPosition.lat}
-                lng={markerPosition.lng}
+                lat={lat}
+                lng={long}
                 text={address}
                 />
             </GoogleMapReact>
