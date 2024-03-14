@@ -85,12 +85,24 @@ const MessagesPage = () => {
     }
   }, [socket.current]);
 
+  // Handles receiving a group from websockets
   function receiveGroup(data) { 
     console.log(data);
     if (data.group) {
-      //setReceivedMessage(data.group);
-      setGroups((grps) => [...grps, data.group]);
+      joinGroup(data.group);
     }
+  }
+
+  // Adds a group to the group list
+  function joinGroup(group) {
+    if (group.isDm) {
+      const names = group.name.split(' ');
+      if (names.length > 1) {
+        group.name = names[0] === user.username ?
+          names[1] : names[0];
+      }
+    }
+    setGroups((grps) => [...grps, group]);
   }
 
   function receiveInvite(data) {
@@ -178,6 +190,24 @@ const MessagesPage = () => {
     try {
       const response = await axios.post(acceptFriendInviteRoute, { inviterId: invite.inviter });
       console.log(response.data); // Log the response from the server
+
+      if (response.data.status) {
+        // Send an update to the inviter
+        const socketData = {
+          group: response.data.group,
+          inviteeId: invite.inviter
+        }
+        socket.current.emit('add-to-group', socketData);
+
+        // Add the group to the group list
+        joinGroup(response.data.group);
+        
+        console.log(invites.indexOf(invite));
+        setInvites(invites.toSpliced(invites.indexOf(invite), 1));
+      }
+      else {
+        console.error("Error accepting invite:", response.data.msg);
+      }
     } catch (error) {
       console.error('Error accepting invite:', error);
     }
@@ -187,6 +217,15 @@ const MessagesPage = () => {
     try {
       const response = await axios.post(declineFriendInviteRoute, { inviterId: invite.inviter });
       console.log(response.data); // Log the response from the server
+
+      if (response.data.status) {
+        console.log('Invite deleted:', invite);
+
+        setInvites(invites.toSpliced(invites.indexOf(invite), 1));
+      }
+      else {
+        console.error('Error declining invite:', response.data.msg);
+      }
     } catch (error) {
       console.error('Error declining invite:', error);
     }
@@ -228,7 +267,8 @@ const MessagesPage = () => {
         <div className="invites-modal">
           <div className="invites-modal-content">
             <h2>Invites</h2>
-            
+              {invites.length === 0 &&
+                <div>You have no invites</div>}
               {invites.map((invite, index) => (
                 <div key={index}>
                   {invite.inviterName}
@@ -237,7 +277,7 @@ const MessagesPage = () => {
                 </div>
               ))}
           
-            <button onClick={() => setShowInvitesModal(false)}>Cancel</button>
+            <button onClick={() => setShowInvitesModal(false)}>Close</button>
           </div>
         </div>
       )}

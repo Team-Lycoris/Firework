@@ -64,8 +64,7 @@ export default function Chat({ selectedGroup, user, socket }) {
 
     function receiveMessage(data) {
         console.log(data);
-        console.log(selectedGroup.id);
-        if (data.groupId == selectedGroup.id) {
+        if (selectedGroup && data.groupId == selectedGroup.id) {
             //setReceivedMessage(data.message);
             setMessages((msgs) => [...msgs, data.message]);
         }
@@ -113,7 +112,7 @@ export default function Chat({ selectedGroup, user, socket }) {
                 // Send an update to the recipient
                 const socketData = {
                     group: res.data.group,
-                    invitee: res.data.invitee
+                    inviteeId: res.data.invitee.id
                 }
                 socket.current.emit('add-to-group', socketData);
             } else {

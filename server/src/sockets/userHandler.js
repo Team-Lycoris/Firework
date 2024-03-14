@@ -38,6 +38,7 @@ export default function userHandler(io, socket, connectedSockets) {
 
     async function handleAddToGroup(data) {
         try {
+            console.log(data);
             // Check if the group exists
             const group = await Group.findOne({ where: { id: data.group.id }});
             if (group === null) {
@@ -46,9 +47,9 @@ export default function userHandler(io, socket, connectedSockets) {
             }
 
             // Check if invitee exists
-            const invitee = await User.findOne({ where: {id: data.invitee.id }});
+            const invitee = await User.findOne({ where: {id: data.inviteeId }});
             if (invitee === null) {
-                console.error("Invitee does not exists")
+                console.error("Invitee does not exist")
                 return;
             }
 
@@ -67,14 +68,14 @@ export default function userHandler(io, socket, connectedSockets) {
             // Check if inviter exists
             const inviter = await User.findOne({ where: {id: data.inviter.id }});
             if (inviter === null) {
-                console.error("Inviter does not exists")
+                console.error("Inviter does not exist")
                 return;
             }
 
             // Check if invitee exists
             const invitee = await User.findOne({ where: {id: data.invitee.id }});
             if (invitee === null) {
-                console.error("Invitee does not exists")
+                console.error("Invitee does not exist")
                 return;
             }
 
@@ -95,13 +96,8 @@ export default function userHandler(io, socket, connectedSockets) {
         }
     }
 
-    function handleAcceptFriendInvite(data) {
-
-    }
-
     socket.on('disconnect', handleDisconnect);
     socket.on('send-message', handleSendMessage);
     socket.on('add-to-group', handleAddToGroup);
     socket.on('send-friend-invite', handleSendFriendInvite);
-    //socket.on('accept-friend-invite', handleAcceptFriendInvite);
 }

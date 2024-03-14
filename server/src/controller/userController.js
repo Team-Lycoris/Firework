@@ -54,6 +54,14 @@ export async function sendFriendInvite(req, res, next) {
         if (invitee === null) {
             return res.json({status: false, msg: "User does not exist"});
         }
+        const existsOutgoing = await FriendInvite.findOne({ where: {inviter: inviter.id, invitee: invitee.id}});
+        if (existsOutgoing) {
+            return res.json({status: false, msg: "You have already sent an invite to this user"});
+        }
+        const existsIncoming = await FriendInvite.findOne({ where: {inviter: invitee.id, invitee: inviter.id}});
+        if (existsIncoming) {
+            return res.json({status: false, msg: "You already have an invite from this user"});
+        }
         const invite = await FriendInvite.create({ inviter: inviter.id, invitee: invitee.id,
                                                    inviterName: inviter.username, inviteeName: invitee.username });
 
